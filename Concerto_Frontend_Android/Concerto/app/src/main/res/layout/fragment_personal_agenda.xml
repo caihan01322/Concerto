@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".fragment.PersonalAgendaFragment">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="我的日程"
+            android:textSize="25sp"
+            android:layout_marginLeft="25dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right">
+
+            <ImageView
+                android:id="@+id/iv_select"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginRight="25dp"
+                android:background="@drawable/pop_selectview" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="34dp"
+        app:tabBackground="@color/white"
+        app:tabIndicatorColor="#00f500"
+        app:tabIndicatorHeight="1dp"
+        app:tabMode="scrollable"
+        app:tabMinWidth="101dp"
+        app:tabPaddingStart="5dp"
+        app:tabPaddingEnd="5dp"
+        app:tabSelectedTextColor="#00f500"
+        app:tabTextAppearance="@style/tab_title"
+        app:tabTextColor="#5b666f" />
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:background="@color/white" >
+
+
+    </androidx.viewpager.widget.ViewPager>
+</LinearLayout>
+
