@@ -31,11 +31,9 @@ public class NavActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav);
 
-        initPagerView();
-
-        viewPager=findViewById(R.id.view_pager);
+        viewPager=(ViewPager) findViewById(R.id.view_pager);
         tabLayout=findViewById(R.id.tab_layout);
-
+        initPagerView();
         setTab(tabLayout, getLayoutInflater(), TAB_TITLES, TAB_IMGS,TAB_SELECTOR);
     }
 
