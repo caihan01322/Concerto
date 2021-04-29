@@ -1,6 +1,5 @@
 package com.example.concerto.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,7 +13,7 @@ import android.widget.ImageView;
 
 import com.example.concerto.R;
 import com.example.concerto.adapter.AgendaFragmentAdapter;
-import com.example.concerto.util.PopWindow;
+import com.example.concerto.util.PopWindowUtil;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ public class PersonalAgendaFragment extends Fragment implements View.OnClickList
     View view;
 
     private AgendaFragmentAdapter adapter;
-    private List<String> names;
+    private List<String> titles;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,24 +48,23 @@ public class PersonalAgendaFragment extends Fragment implements View.OnClickList
         iv_select.setOnClickListener(this);
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
-
         // 更新适配器数据
-        adapter.setList(names);
+        adapter.setList(titles);
         return view;
     }
 
     private void initData() {
-        names = new ArrayList<>();
-        names.add("推荐");
-        names.add("今日");
-        names.add("本周");
-        names.add("本月");
+        titles = new ArrayList<>();
+        titles.add("推荐");
+        titles.add("今日");
+        titles.add("本周");
+        titles.add("本月");
     }
 
 
     @Override
     public void onClick(View v) {
-        PopWindow popWindow = new PopWindow(this);
+        PopWindowUtil popWindow = new PopWindowUtil(this.getActivity(),R.layout.activity_select,180,0,0);
         popWindow.setOnDismissListener(() -> {
             WindowManager.LayoutParams lp1 = getActivity().getWindow().getAttributes();
             lp1.alpha = 1f;

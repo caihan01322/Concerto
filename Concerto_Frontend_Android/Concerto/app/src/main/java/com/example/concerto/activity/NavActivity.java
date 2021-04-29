@@ -56,7 +56,7 @@ public class NavActivity extends AppCompatActivity {
     private void initPagerView() {
         adapter = new MenuFragmentAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
-
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
