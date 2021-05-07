@@ -57,6 +57,8 @@
         app:tabTextAppearance="@style/tab_title"
         app:tabTextColor="#5b666f" />
 
+
+
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/view_pager_project_details_title"
         android:layout_width="match_parent"
@@ -66,5 +68,6 @@
 
 
     </androidx.viewpager.widget.ViewPager>
+
 </LinearLayout>
 

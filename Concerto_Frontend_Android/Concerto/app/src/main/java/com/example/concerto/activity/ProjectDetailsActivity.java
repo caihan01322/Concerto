@@ -1,6 +1,7 @@
 package com.example.concerto.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Context;
@@ -26,7 +27,7 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
     ImageView iv_back;
     ImageView iv_select;//弹出筛选界面
     View view;
-    private ProjectDetailsAdapter adapter;
+    private PagerAdapter adapter;
     private List<String> titles;
 
     @Override
@@ -36,10 +37,17 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
         iv_back=findViewById(R.id.iv_project_details_back);
         tv_title=findViewById(R.id.tv_project_details_title);
         iv_select=findViewById(R.id.iv_project_details_select);
-        initData();
+        viewPager=findViewById(R.id.view_pager_project_details_title);
+        tabLayout=findViewById(R.id.tab_project_details_layout_content);
         iv_select.setOnClickListener(this);
-        adapter.setList(titles);
+        titles = new ArrayList<>();
+        titles.add("本周");
+        titles.add("全部");
+        titles.add("详情");
+        titles.add("人员");
+        adapter=new ProjectDetailsAdapter(getSupportFragmentManager(),titles);
         viewPager.setAdapter(adapter);
+
         tabLayout.setupWithViewPager(viewPager);
     }
 
@@ -63,7 +71,7 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
                     getWindow().setAttributes(lp1);
                 });
-                popWindow.showPopupWindow(view.findViewById(R.id.iv_select));
+                popWindow.showPopupWindow(findViewById(R.id.iv_project_details_select));
                 WindowManager.LayoutParams lp = getWindow().getAttributes();
                 lp.alpha = 0.8f; //设置透明度
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);

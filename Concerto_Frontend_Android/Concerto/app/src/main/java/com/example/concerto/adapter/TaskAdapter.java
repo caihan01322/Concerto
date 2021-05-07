@@ -1,6 +1,9 @@
 package com.example.concerto.adapter;
 
-import android.graphics.drawable.Drawable;
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,17 +15,19 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.concerto.R;
-import com.example.concerto.TaskItem;
+import com.example.concerto.bean.TaskItem;
 
 import java.util.List;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
     private List<TaskItem> mtasks;
-    String[] colors={"#778899","#ff8c00","#fa8072","#7fff00","#1e90ff"};
+    String[] colors={"#FFB6C1","#BA55D3","#1E90FF","#00FFFF","#00FF7F"};
+    Context mcontext;
 
-    public TaskAdapter(List<TaskItem> tasks){
+    public TaskAdapter(List<TaskItem> tasks ,Context context){
         mtasks=tasks;
+        mcontext=context;
     }
 
     @NonNull
@@ -37,7 +42,76 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         TaskItem task=mtasks.get(position);
         int days=task.getDays();
-        holder.line.setBackground(Drawable.createFromPath(colors[days%5]));
+        holder.line.setBackgroundColor(Color.parseColor(colors[position%5]));
+        holder.tv_title.setText(task.getTaskTitle());
+
+        int tw=180,th=70;//tag的宽和高
+        int nw=180,nh=70;//name的宽和高
+        int strokeWidth = 5;//边框宽度
+        int roundRadius = 38; // 圆角半径
+
+        //左上角圆框
+        int strokeColor_complete = Color.parseColor(colors[position%5]);//边框颜色
+        GradientDrawable gdc = new GradientDrawable();
+        gdc.setStroke(strokeWidth, strokeColor_complete);
+        gdc.setCornerRadius(roundRadius);
+        holder.tv_complete.setBackgroundDrawable(gdc);
+
+
+        //添加Tags
+        for(int i=0;i<task.getTags().length;i++){
+            TextView textView = new TextView(mcontext);
+            textView.setText(task.getTags()[i]);
+            textView.setWidth(tw);
+            textView.setHeight(th);
+
+            //textView.setBackgroundColor(Color.parseColor(colors[i%5]));
+
+            LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            layout.setMargins(15, 0, 0, 0);
+            textView.setLayoutParams(layout);
+
+            textView.setGravity(Gravity.CENTER);
+
+            //设置圆角
+            int strokeColor = Color.parseColor(colors[i%5]);//边框颜色
+            int fillColor = Color.parseColor(colors[i%5]);//内部填充颜色
+
+            GradientDrawable gd = new GradientDrawable();//创建drawable
+            gd.setColor(fillColor);
+            gd.setCornerRadius(roundRadius);
+            gd.setStroke(strokeWidth, strokeColor);
+            textView.setBackgroundDrawable(gd);
+            holder.tags.addView(textView);
+        }
+
+        //添加成员
+        for(int i=0;i<task.getNames().length;i++){
+            TextView textView = new TextView(mcontext);
+            textView.setText(task.getNames()[i]);
+            textView.setWidth(nw);
+            textView.setHeight(nh);
+            
+            textView.setBackgroundColor(Color.parseColor(colors[i%5]));
+            LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            layout.setMargins(15, 0, 0, 0);
+            textView.setLayoutParams(layout);
+
+            textView.setGravity(Gravity.CENTER);
+
+            int strokeColor = Color.parseColor(colors[i%5]);//边框颜色
+            int fillColor = Color.parseColor(colors[i%5]);//内部填充颜色
+
+            GradientDrawable gd = new GradientDrawable();//创建drawable
+            gd.setColor(fillColor);
+            gd.setCornerRadius(roundRadius);
+            gd.setStroke(strokeWidth, strokeColor);
+            textView.setBackgroundDrawable(gd);
+
+            holder.names.addView(textView);
+        }
 
 
 

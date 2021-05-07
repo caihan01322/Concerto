@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.EditTasks"
+    tools:context=".fragment.TasksDetailsFragement"
     android:background="#2FFFC107"
     android:orientation="vertical">
     <TextView
@@ -32,10 +33,11 @@
                 android:layout_weight="2"
                 android:text="名称："
                 android:textSize="18sp"/>
-            <EditText
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="10"/>
+                android:layout_weight="6"
+                android:text="你好xxxxxxxx"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -46,12 +48,12 @@
                 android:layout_weight="2"
                 android:text="开始时间："
                 android:textSize="18sp"/>
-            <DatePicker
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="6"
-                android:datePickerMode="spinner"
-                android:calendarViewShown="false"/>
+                android:text="XX月XX日XX时"
+               />
         </LinearLayout>
 
         <LinearLayout
@@ -63,12 +65,12 @@
                 android:layout_weight="2"
                 android:text="结束时间："
                 android:textSize="18sp"/>
-            <DatePicker
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="6"
-                android:datePickerMode="spinner"
-                android:calendarViewShown="false"/>
+                android:text="XX月XX日XX时"
+                />
         </LinearLayout>
 
         <LinearLayout
@@ -97,20 +99,23 @@
         android:layout_marginTop="35dp"
         android:layout_marginLeft="15dp"
         />
-    <EditText
-        android:id="@+id/add_content"
-        android:layout_width="fill_parent"
+    <TextView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:enabled="true"
-        android:gravity="top"
-        android:inputType="textMultiLine"
-        android:minLines="8"
-        android:maxLines="10"
-        android:scrollbars="vertical"
-        android:background="@android:drawable/edit_text"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-    />
+        android:minLines="8"
+        android:background="@android:drawable/edit_text"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_task_details_alter"
+        android:layout_width="108dp"
+        android:layout_height="45dp"
+        android:background="#75cfb8"
+        app:backgroundTint="#75cfb8"
+        android:layout_marginTop="66dp"
+        android:text="修改"
+        android:layout_gravity="center_horizontal"/>
 
 
 </LinearLayout>

@@ -1,4 +1,6 @@
-package com.example.concerto;
+package com.example.concerto.bean;
+
+import java.util.List;
 
 public class TaskItem {
     private String taskTitle;
@@ -6,6 +8,9 @@ public class TaskItem {
     private String[] tags;
     private int days;
     private String[] names;
+
+
+    public TaskItem(){}
 
     public int getDays() {
         return days;

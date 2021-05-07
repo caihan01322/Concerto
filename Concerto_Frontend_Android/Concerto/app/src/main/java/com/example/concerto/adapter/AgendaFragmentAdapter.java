@@ -25,7 +25,24 @@ public class AgendaFragmentAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        Fragment fragment=new TaskListFragment();
+        //0==推荐，1==今日，2==本周，3==本月
+        Fragment fragment=null;
+        switch (position){
+            case 0:
+                fragment = new TaskListFragment(0);
+                break;
+            case 1:
+                fragment = new TaskListFragment(1);
+                break;
+            case 2:
+                fragment = new TaskListFragment(2);
+                break;
+            case 3:
+                fragment = new TaskListFragment(3);
+                break;
+            default:
+                break;
+        }
         return fragment;
     }
 

@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginTop="5dp"
+    android:layout_marginRight="5dp">
     <View
         android:id="@+id/view_line"
         android:layout_width="8dp"
-        android:layout_height="150dp"
+        android:layout_height="130dp"
         android:layout_gravity="center_horizontal"
         android:background="#00ff00"/>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="130dp"
         android:orientation="vertical"
+        android:background="#fff"
         >
         <LinearLayout
             android:layout_width="match_parent"
@@ -42,12 +45,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="4dp"
             >
             <TextView
                 android:id="@+id/tv_task_item_processbar"
                 android:layout_width="60dp"
-                android:layout_height="35dp"
+                android:layout_height="28dp"
                 android:background="@drawable/shape_corner"
                 android:padding="0dp"
                 android:text="10/11"
@@ -61,34 +64,14 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginLeft="20dp">
-                <TextView
-                    android:id="@+id/tv_task_item_tag1"
-                    android:layout_width="60dp"
-                    android:layout_height="35dp"
-                    android:background="@drawable/shape_corner"
-                    android:padding="0dp"
-                    android:text="tag1"
-                    android:gravity="center"
-                    android:textSize="20sp"
-                    />
 
-                <TextView
-                    android:id="@+id/tv_task_item_tag2"
-                    android:layout_width="60dp"
-                    android:layout_height="35dp"
-                    android:background="@drawable/shape_corner"
-                    android:padding="0dp"
-                    android:text="tag2"
-                    android:gravity="center"
-                    android:textSize="20sp"
-                    />
 
             </LinearLayout>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp">
+            android:layout_marginTop="7dp">
             <ProgressBar
                 android:id="@+id/tv_task_item_timebar"
                 android:layout_width="120dp"
@@ -103,27 +86,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginLeft="20dp">
-                <TextView
-                    android:id="@+id/tv_task_item_name1"
-                    android:layout_width="60dp"
-                    android:layout_height="35dp"
-                    android:background="@drawable/shape_corner"
-                    android:padding="0dp"
-                    android:text="tag1"
-                    android:gravity="center"
-                    android:textSize="20sp"
-                    />
 
-                <TextView
-                    android:id="@+id/tv_task_item_name2"
-                    android:layout_width="60dp"
-                    android:layout_height="35dp"
-                    android:background="@drawable/shape_corner"
-                    android:padding="0dp"
-                    android:text="tag2"
-                    android:gravity="center"
-                    android:textSize="20sp"
-                    />
 
             </LinearLayout>
         </LinearLayout>

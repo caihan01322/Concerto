@@ -5,43 +5,42 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import com.example.concerto.fragment.ParticipantsFragment;
+import com.example.concerto.fragment.TasksDetailsFragement;
 import com.example.concerto.fragment.MyInformationFragment;
-import com.example.concerto.fragment.MyProjectFragment;
-import com.example.concerto.fragment.PersonalAgendaFragment;
+
 import com.example.concerto.fragment.TaskListFragment;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ProjectDetailsAdapter extends FragmentPagerAdapter {
     private List<String> titles;
 
-    public ProjectDetailsAdapter(@NonNull FragmentManager fm) {
+    public ProjectDetailsAdapter(@NonNull FragmentManager fm,List<String> datas) {
         super(fm);
-        this.titles = new ArrayList<>();
+        this.titles = datas;
     }
 
     public void setList(List<String> datas) {
         this.titles.clear();
         this.titles.addAll(datas);
-        notifyDataSetChanged();
     }
-    @NonNull
+
     @Override
     public Fragment getItem(int position) {
         Fragment fragment = null;
         switch (position) {
             case 0:
-                fragment = new TaskListFragment();
+                fragment = new TaskListFragment(0);
                 break;
             case 1:
-                fragment = new TaskListFragment();
+                fragment = new TaskListFragment(1);
                 break;
             case 2:
-                fragment = new MyInformationFragment();
+                fragment = new TasksDetailsFragement();
                 break;
             case 3:
-                fragment = new MyInformationFragment();
+                fragment = new ParticipantsFragment();
                 break;
             default:
                 break;
