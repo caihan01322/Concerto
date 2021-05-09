@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -12,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.concerto.R;
-import com.example.concerto.adapter.AgendaFragmentAdapter;
 import com.example.concerto.adapter.ProjectDetailsAdapter;
 import com.example.concerto.util.PopWindowUtil;
 import com.google.android.material.tabs.TabLayout;
@@ -52,19 +50,11 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
     }
 
 
-    private void initData() {
-        titles = new ArrayList<>();
-        titles.add("本周");
-        titles.add("全部");
-        titles.add("详情");
-        titles.add("人员");
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.iv_project_details_select:
-                PopWindowUtil popWindow = new PopWindowUtil(this,R.layout.activity_select,180,0,0);
+                PopWindowUtil popWindow = new PopWindowUtil(this,R.layout.popwindow_select,280,0,0);
                 popWindow.setOnDismissListener(() -> {
                     WindowManager.LayoutParams lp1 =getWindow().getAttributes();
                     lp1.alpha = 1f;

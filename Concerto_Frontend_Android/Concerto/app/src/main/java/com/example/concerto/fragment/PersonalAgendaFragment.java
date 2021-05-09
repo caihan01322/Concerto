@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import com.example.concerto.R;
 import com.example.concerto.activity.ProjectDetailsActivity;
 import com.example.concerto.adapter.AgendaFragmentAdapter;
-import com.example.concerto.adapter.ProjectDetailsAdapter;
 import com.example.concerto.util.PopWindowUtil;
 import com.google.android.material.tabs.TabLayout;
 
@@ -100,7 +99,7 @@ public class PersonalAgendaFragment extends Fragment implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        PopWindowUtil popWindow = new PopWindowUtil(this.getActivity(),R.layout.activity_select,180,0,0);
+        PopWindowUtil popWindow = new PopWindowUtil(this.getActivity(),R.layout.popwindow_select,280,0,0);
         popWindow.setOnDismissListener(() -> {
             WindowManager.LayoutParams lp1 = getActivity().getWindow().getAttributes();
             lp1.alpha = 1f;

@@ -3,6 +3,7 @@ package com.example.concerto.bean;
 import java.util.List;
 
 public class TaskItem {
+    private  int complete=0;
     private String taskTitle;
     private String taskProgres;
     private String[] tags;
@@ -52,6 +53,11 @@ public class TaskItem {
         this.taskTitle = taskTitle;
     }
 
+    public int getComplete() {
+        return complete;
+    }
 
-
+    public void setComplete(int complete) {
+        this.complete = complete;
+    }
 }

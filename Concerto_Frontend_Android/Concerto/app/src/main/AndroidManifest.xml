@@ -10,7 +10,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Concerto">
         <activity android:name=".activity.ProjectDetailsActivity"></activity>
-        <activity android:name=".activity.SelectActivity" />
         <activity android:name=".activity.NavActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

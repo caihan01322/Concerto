@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -36,6 +41,7 @@
         android:layout_marginLeft="15dp"
         android:layout_marginTop="3dp"
         />
+    <!--
     <HorizontalScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -73,6 +79,13 @@
     </LinearLayout>
     </HorizontalScrollView>
 
+    -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_tags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="5dp"/>
     <TextView
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
@@ -88,7 +101,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="18dp"
-        android:layout_marginLeft="35dp"
+        android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp">
 
         <EditText
@@ -113,7 +126,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="3dp"
-        android:layout_marginLeft="35dp"
+        android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp">
 
         <EditText
@@ -131,6 +144,7 @@
             android:layout_height="35dp"
             android:layout_weight="1"
             android:layout_marginTop="5dp"
+            android:background="@drawable/tick"
             />
     </LinearLayout>
     <LinearLayout
@@ -138,7 +152,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="3dp"
-        android:layout_marginLeft="35dp"
+        android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp">
 
         <EditText
@@ -170,6 +184,7 @@
         android:layout_marginTop="3dp"
         />
 
+    <!--
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -199,6 +214,15 @@
             />
     </LinearLayout>
 
+    -->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_names"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="5dp"/>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_select"
         android:layout_width="200dp"
@@ -210,3 +234,4 @@
         android:textSize="20dp"
         app:backgroundTint="#009688" />
 </LinearLayout>
+</ScrollView>

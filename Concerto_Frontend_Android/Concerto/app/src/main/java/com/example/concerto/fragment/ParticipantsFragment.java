@@ -62,8 +62,8 @@ public class ParticipantsFragment extends Fragment {
     public void initData(){
         for(int i=0;i<9;i++){
             UserItem user=new UserItem("name"+i,"mailbox"+i);
-            participants.add(user);
             candidates.add(user);
+            participants.add(user);
         }
 
     }

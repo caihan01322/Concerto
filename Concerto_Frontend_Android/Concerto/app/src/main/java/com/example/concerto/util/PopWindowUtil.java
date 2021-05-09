@@ -8,6 +8,14 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.PopupWindow;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.concerto.R;
+import com.example.concerto.adapter.GridAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class PopWindowUtil extends PopupWindow{
@@ -17,6 +25,11 @@ public class PopWindowUtil extends PopupWindow{
     int h,w;
     int x,y;
     int width;
+
+    List<String> tags;
+    List<String> names;
+    RecyclerView rv_tags;
+    RecyclerView rv_names;
 
     public void setLayout(int layout) {
         this.layout = layout;
@@ -30,8 +43,8 @@ public class PopWindowUtil extends PopupWindow{
     public PopWindowUtil(final Activity context, int layout, int width, int x, int y){
         setLayout(layout);
         setWidth(width);
-        x=x;
-        y=y;
+        this.x=x;
+        this.y=y;
         createPopWindow(context);
     }
 
@@ -39,6 +52,28 @@ public class PopWindowUtil extends PopupWindow{
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         conentView = inflater.inflate(layout, null);
+
+        rv_tags=conentView.findViewById(R.id.rv_tags);
+        rv_names=conentView.findViewById(R.id.rv_names);
+
+
+        GridLayoutManager mgr_tags=new GridLayoutManager(context,3);
+        GridLayoutManager mgr_names=new GridLayoutManager(context,3);
+        rv_tags.setLayoutManager(mgr_tags);
+        rv_names.setLayoutManager(mgr_names);
+
+        tags=new ArrayList<>();
+        names=new ArrayList<>();
+
+        initdata();
+        GridAdapter adapter_tags=new GridAdapter(tags);
+
+        GridAdapter adapter_names=new GridAdapter(names);
+
+        rv_tags.setAdapter(adapter_tags);
+        rv_names.setAdapter(adapter_names);
+
+
         h = context.getWindowManager().getDefaultDisplay().getHeight();
         w = context.getWindowManager().getDefaultDisplay().getWidth();
         // 设置SelectPicPopupWindow的View
@@ -52,6 +87,14 @@ public class PopWindowUtil extends PopupWindow{
         this.setOutsideTouchable(true);
         // 刷新状态
         this.update();
+    }
+
+    public void initdata() {
+        for(int i=0;i<15;i++){
+            tags.add("tag"+i);
+            names.add("name"+i);
+        }
+
     }
 
     public void showPopupWindow(View parent) {
