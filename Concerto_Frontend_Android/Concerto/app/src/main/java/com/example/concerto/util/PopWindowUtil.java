@@ -5,6 +5,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
 import androidx.fragment.app.Fragment;
@@ -18,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class PopWindowUtil extends PopupWindow{
+public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
 
     int layout;
     private View conentView;
@@ -30,6 +32,12 @@ public class PopWindowUtil extends PopupWindow{
     List<String> names;
     RecyclerView rv_tags;
     RecyclerView rv_names;
+    LinearLayout line_time;
+    LinearLayout line_urgent;
+    LinearLayout line_about_me;
+    ImageView iv_time;
+    ImageView iv_urgent;
+    ImageView iv_me;
 
     public void setLayout(int layout) {
         this.layout = layout;
@@ -46,24 +54,33 @@ public class PopWindowUtil extends PopupWindow{
         this.x=x;
         this.y=y;
         createPopWindow(context);
+
     }
 
     public void createPopWindow(final Activity context){
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
         conentView = inflater.inflate(layout, null);
 
+        tags=new ArrayList<>();
+        names=new ArrayList<>();
         rv_tags=conentView.findViewById(R.id.rv_tags);
         rv_names=conentView.findViewById(R.id.rv_names);
-
+        line_time=conentView.findViewById(R.id.line_time);
+        iv_time=conentView.findViewById(R.id.iv_order_time);
+        iv_urgent=conentView.findViewById(R.id.iv_order_urgent);
+        iv_me=conentView.findViewById(R.id.iv_order_participate);
+        line_time.setOnClickListener(this);
+        line_urgent=conentView.findViewById(R.id.line_urgent);
+        line_about_me=conentView.findViewById(R.id.line_about_me);
 
         GridLayoutManager mgr_tags=new GridLayoutManager(context,3);
         GridLayoutManager mgr_names=new GridLayoutManager(context,3);
         rv_tags.setLayoutManager(mgr_tags);
         rv_names.setLayoutManager(mgr_names);
 
-        tags=new ArrayList<>();
-        names=new ArrayList<>();
+
 
         initdata();
         GridAdapter adapter_tags=new GridAdapter(tags);
@@ -103,6 +120,52 @@ public class PopWindowUtil extends PopupWindow{
             this.showAsDropDown(parent, x, 0);
         } else {
             this.dismiss();
+        }
+    }
+
+    int flag_time=0,flag_urgent=0,flag_me=0;
+    @Override
+    public void onClick(View v) {
+
+        //R.id.line.XX点击一下则打勾，再点击打勾取消
+        switch (v.getId()){
+            case R.id.line_time:
+                switch (flag_time){
+                    case 0:
+                        flag_time=1;
+                        iv_time.setBackgroundResource(R.drawable.tick);
+                        break;
+                    case 1:
+                        flag_time=0;
+                        iv_time.setBackgroundResource(R.color.white);
+                        break;
+                }
+                break;
+
+            case R.id.line_urgent:
+                switch (flag_urgent){
+                    case 0:
+                        flag_urgent=1;
+                        iv_urgent.setBackgroundResource(R.drawable.tick);
+                        break;
+                    case 1:
+                        flag_urgent=0;
+                        iv_urgent.setBackgroundResource(R.color.white);
+                        break;
+                }
+                break;
+            case R.id.line_about_me:
+                switch (flag_me){
+                    case 0:
+                        flag_me=1;
+                        iv_me.setBackgroundResource(R.drawable.tick);
+                        break;
+                    case 1:
+                        flag_me=0;
+                        iv_me.setBackgroundResource(R.color.white);
+                        break;
+                }
+                break;
         }
     }
 }

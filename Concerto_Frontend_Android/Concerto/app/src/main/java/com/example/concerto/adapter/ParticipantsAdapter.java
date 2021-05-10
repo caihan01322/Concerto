@@ -25,7 +25,7 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<ParticipantsAdapte
     @Override
     public ParticipantsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.participants_item,parent,false);
-        ParticipantsAdapter.ViewHolder holder=new ParticipantsAdapter.ViewHolder(view);
+        final ParticipantsAdapter.ViewHolder holder=new ParticipantsAdapter.ViewHolder(view);
         return holder;
     }
 
@@ -53,4 +53,6 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<ParticipantsAdapte
 
         }
     }
+
+
 }

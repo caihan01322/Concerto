@@ -5,6 +5,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -38,6 +39,7 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
         viewPager=findViewById(R.id.view_pager_project_details_title);
         tabLayout=findViewById(R.id.tab_project_details_layout_content);
         iv_select.setOnClickListener(this);
+        iv_back.setOnClickListener(this);
         titles = new ArrayList<>();
         titles.add("本周");
         titles.add("全部");
@@ -68,6 +70,11 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
                 getWindow().setAttributes(lp);
                 break;
             case R.id.iv_project_details_back:
+                Log.v("ProjectDetails","----------返回--------");
+                this.finish();
+                break;
+            default:
+                break;
         }
 
     }

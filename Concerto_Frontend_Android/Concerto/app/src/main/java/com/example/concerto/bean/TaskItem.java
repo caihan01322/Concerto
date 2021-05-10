@@ -6,7 +6,7 @@ public class TaskItem {
     private  int complete=0;
     private String taskTitle;
     private String taskProgres;
-    private String[] tags;
+    public List<TagsItem> tags;
     private int days;
     private String[] names;
 
@@ -29,7 +29,11 @@ public class TaskItem {
         return names;
     }
 
-    public String[] getTags() {
+    public void setTags(List<TagsItem> tags) {
+        this.tags = tags;
+    }
+
+    public List<TagsItem> getTags() {
         return tags;
     }
 
@@ -41,9 +45,6 @@ public class TaskItem {
         this.names = names;
     }
 
-    public void setTags(String[] tags) {
-        this.tags = tags;
-    }
 
     public void setTaskProgres(String taskProgres) {
         this.taskProgres = taskProgres;

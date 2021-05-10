@@ -35,6 +35,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.task_item,parent,false);
         ViewHolder holder=new ViewHolder(view);
+
+        //点击跳转至任务表单
+        holder.task_item_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         return holder;
     }
 
@@ -57,21 +65,23 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         gdc.setCornerRadius(roundRadius);
         holder.tv_complete.setBackgroundDrawable(gdc);
         holder.tv_process.setBackground(gdc);
+        holder.timebar.setBackgroundColor(Color.parseColor(colors[position%5]));
 
         //如果完成则。。。
         if(task.getComplete()==1){
             holder.tv_complete.setText("*");
             holder.tv_complete.setTextColor(Color.parseColor(colors[position%5]));
+            holder.line.setBackgroundColor(Color.parseColor("#808080"));
         }
 
         //添加Tags
-        for(int i=0;i<task.getTags().length;i++){
+        for(int i=0;i<task.getTags().size();i++){
+            if(i>=3)
+                break;
             TextView textView = new TextView(mcontext);
-            textView.setText(task.getTags()[i]);
+            textView.setText(task.tags.get(i).tagContent);
             textView.setWidth(tw);
             textView.setHeight(th);
-
-            //textView.setBackgroundColor(Color.parseColor(colors[i%5]));
 
             LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -81,8 +91,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             textView.setGravity(Gravity.CENTER);
 
             //设置圆角
-            int strokeColor = Color.parseColor(colors[i%5]);//边框颜色
-            int fillColor = Color.parseColor(colors[i%5]);//内部填充颜色
+            int strokeColor = Color.parseColor(task.tags.get(i).tagColor);//边框颜色
+            int fillColor = Color.parseColor(task.tags.get(i).tagColor);//内部填充颜色
 
             GradientDrawable gd = new GradientDrawable();//创建drawable
             gd.setColor(fillColor);
@@ -94,6 +104,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
         //添加成员
         for(int i=0;i<task.getNames().length;i++){
+            if(i>=3)
+                break;
             TextView textView = new TextView(mcontext);
             textView.setText(task.getNames()[i]);
             textView.setWidth(nw);
@@ -131,13 +143,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
+        LinearLayout task_item_layout;
         View line;
+        TextView tv_days;
         TextView tv_complete;
         TextView tv_title;
         TextView tv_process;
         LinearLayout tags;
         LinearLayout names;
-        ProgressBar timebar;
+        TextView timebar;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             line=itemView.findViewById(R.id.view_line);
@@ -146,7 +160,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             tv_process=itemView.findViewById(R.id.tv_task_item_processbar);
             tags=itemView.findViewById(R.id.line_tags);
             names=itemView.findViewById(R.id.line_names);
-            timebar=itemView.findViewById(R.id.tv_task_item_timebar);
+            timebar=itemView.findViewById(R.id.tv_task_item_time);
+            task_item_layout=itemView.findViewById(R.id.task_item);
+            tv_days=itemView.findViewById(R.id.tv_task_days);
         }
     }
 }

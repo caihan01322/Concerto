@@ -97,6 +97,7 @@
         />
 
     <LinearLayout
+        android:id="@+id/line_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -122,6 +123,7 @@
             />
     </LinearLayout>
     <LinearLayout
+        android:id="@+id/line_urgent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -144,10 +146,10 @@
             android:layout_height="35dp"
             android:layout_weight="1"
             android:layout_marginTop="5dp"
-            android:background="@drawable/tick"
             />
     </LinearLayout>
     <LinearLayout
+        android:id="@+id/line_about_me"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
