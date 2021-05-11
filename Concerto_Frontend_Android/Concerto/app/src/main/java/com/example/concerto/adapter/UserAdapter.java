@@ -31,6 +31,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         return holder;
     }
 
+    public void setMusers(List<UserItem> musers) {
+        this.musers = musers;
+        notifyDataSetChanged();
+    }
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         UserItem user=musers.get(position);

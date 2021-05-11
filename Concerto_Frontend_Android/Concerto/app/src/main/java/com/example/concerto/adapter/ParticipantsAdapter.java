@@ -18,6 +18,11 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<ParticipantsAdapte
 
     List<UserItem> musers;
 
+    public void setMusers(List<UserItem> musers) {
+        this.musers = musers;
+        notifyDataSetChanged();
+    }
+
     public ParticipantsAdapter(List<UserItem> users){
         musers=users;
     }
@@ -53,6 +58,8 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<ParticipantsAdapte
 
         }
     }
+
+
 
 
 }

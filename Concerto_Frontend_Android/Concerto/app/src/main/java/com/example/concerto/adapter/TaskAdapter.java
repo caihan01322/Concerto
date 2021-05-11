@@ -1,5 +1,6 @@
 package com.example.concerto.adapter;
 
+import android.app.Notification;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -46,10 +47,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         return holder;
     }
 
+    public void setData(List<TaskItem> tasks){
+        mtasks=tasks;
+        this.notifyDataSetChanged();
+    }
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         TaskItem task=mtasks.get(position);
         int days=task.getDays();
+        holder.tv_days.setText(days+"天");
         holder.line.setBackgroundColor(Color.parseColor(colors[position%5]));
         holder.tv_title.setText(task.getTaskTitle());
 
@@ -103,18 +110,18 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         }
 
         //添加成员
-        for(int i=0;i<task.getNames().length;i++){
+        for(int i=0;i<task.getNames().size();i++){
             if(i>=3)
                 break;
             TextView textView = new TextView(mcontext);
-            textView.setText(task.getNames()[i]);
+            textView.setText(task.getNames().get(i));
             textView.setWidth(nw);
             textView.setHeight(nh);
             
             //textView.setBackgroundColor(Color.parseColor(colors[i%5]));
             LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            layout.setMargins(0, 2, 1, 0);
+            layout.setMargins(0, 2, 12, 0);
             textView.setLayoutParams(layout);
 
             textView.setGravity(Gravity.CENTER);

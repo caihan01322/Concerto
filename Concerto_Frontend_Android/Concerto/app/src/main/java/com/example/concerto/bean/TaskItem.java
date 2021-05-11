@@ -3,13 +3,22 @@ package com.example.concerto.bean;
 import java.util.List;
 
 public class TaskItem {
+    private String taskId;
     private  int complete=0;
     private String taskTitle;
     private String taskProgres;
     public List<TagsItem> tags;
     private int days;
-    private String[] names;
+    private List<String> names;
 
+
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
 
     public TaskItem(){}
 
@@ -25,7 +34,7 @@ public class TaskItem {
         return taskTitle;
     }
 
-    public String[] getNames() {
+    public List<String> getNames() {
         return names;
     }
 
@@ -41,7 +50,7 @@ public class TaskItem {
         this.days = days;
     }
 
-    public void setNames(String[] names) {
+    public void setNames(List<String> names) {
         this.names = names;
     }
 

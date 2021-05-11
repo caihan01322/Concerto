@@ -26,8 +26,11 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
     ImageView iv_back;
     ImageView iv_select;//弹出筛选界面
     View view;
+    public  long projectId=2;
     private PagerAdapter adapter;
     private List<String> titles;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

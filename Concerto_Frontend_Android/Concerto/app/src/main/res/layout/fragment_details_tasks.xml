@@ -78,17 +78,26 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp">
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="75dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
                 android:text="邀请码："
                 android:textSize="18sp"/>
             <TextView
-                android:layout_width="0dp"
+                android:id="@+id/tv_invitationCode"
+                android:layout_width="150dp"
                 android:layout_height="35dp"
-                android:layout_weight="6"
+                android:singleLine="true"
+                android:layout_marginLeft="8dp"
                 android:text="123456"
-                android:textSize="20sp"/>
+                android:textSize="17sp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_copy"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="22dp"
+                android:layout_height="wrap_content"
+                android:text="拷贝"
+                app:backgroundTint="#75cfbb" />
         </LinearLayout>
     </LinearLayout>
     <TextView

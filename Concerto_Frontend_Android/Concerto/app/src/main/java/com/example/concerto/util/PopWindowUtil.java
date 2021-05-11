@@ -16,8 +16,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.concerto.R;
 import com.example.concerto.adapter.GridAdapter;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 
 public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
@@ -27,6 +35,9 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
     int h,w;
     int x,y;
     int width;
+    String tagData;
+    String nameData;
+    JSONArray jsonArray;
 
     List<String> tags;
     List<String> names;
@@ -107,8 +118,8 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
     }
 
     public void initdata() {
-        for(int i=0;i<15;i++){
-            tags.add("tag"+i);
+        for(int i=0;i<13;i++){
+            tags.add("tag111111"+i);
             names.add("name"+i);
         }
 
@@ -167,5 +178,42 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
                 }
                 break;
         }
+    }
+
+
+    public void getData() {
+
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String tagsurl = "";
+                    String nameUrl="";
+                    OkHttpClient client=new OkHttpClient();
+                    Request.Builder reqBuild = new Request.Builder();
+                    //reqBuild.addHeader();
+                    HttpUrl.Builder urlBuilder = HttpUrl.parse(tagsurl)
+                            .newBuilder();
+                    reqBuild.url(urlBuilder.build());
+                    Request request = reqBuild.build();
+                    Response response = client.newCall(request).execute();
+                    tagData=response.body().string();
+
+                    if(tagData != null && tagData.startsWith("\ufeff"))
+                    {
+                        tagData =  tagData.substring(1);
+                    }
+
+
+                    JSONObject jsonObject=new JSONObject(tagData);
+                    jsonArray=(JSONArray)jsonObject.getJSONArray("data");
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
     }
 }

@@ -11,9 +11,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.concerto.R;
+import com.example.concerto.activity.ProjectDetailsActivity;
 import com.example.concerto.bean.UserItem;
 
 import java.util.List;
+
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
 
 public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.ViewHolder> {
 
@@ -54,6 +59,16 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.View
 
     public String sendOperation(long pid,long uid,String op){
         String message="";
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    OkHttpClient client=new OkHttpClient();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
         return message;
     }
 

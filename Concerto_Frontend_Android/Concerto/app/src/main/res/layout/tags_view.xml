@@ -9,6 +9,7 @@
         android:layout_width="60dp"
         android:layout_height="30dp"
         android:textSize="17sp"
-        android:background="#2FFFC107"/>
+        android:background="#2FFFC107"
+        android:maxLines="1"/>
 
 </FrameLayout>
