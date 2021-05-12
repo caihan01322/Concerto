@@ -16,7 +16,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.concerto.R;
+import com.example.concerto.bean.TagsItem;
 import com.example.concerto.bean.TaskItem;
+import com.example.concerto.fragment.TaskListFragment;
 
 import java.util.List;
 
@@ -25,10 +27,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     private List<TaskItem> mtasks;
     String[] colors={"#FFB6C1","#BA55D3","#1E90FF","#00FFFF","#00FF7F"};
     Context mcontext;
+    TaskListFragment fragment;
 
-    public TaskAdapter(List<TaskItem> tasks ,Context context){
+    public TaskAdapter(List<TaskItem> tasks , Context context, TaskListFragment fragment){
         mtasks=tasks;
         mcontext=context;
+        this.fragment=fragment;
     }
 
     @NonNull
@@ -76,9 +80,19 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
         //如果完成则。。。
         if(task.getComplete()==1){
-            holder.tv_complete.setText("*");
+
             holder.tv_complete.setTextColor(Color.parseColor(colors[position%5]));
             holder.line.setBackgroundColor(Color.parseColor("#808080"));
+        }
+
+        if(task.getComplete()==0){
+            holder.tv_complete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    TaskItem task=mtasks.get(position);
+                    fragment.completeTask(task,position);
+                }
+            });
         }
 
         //添加Tags
@@ -136,7 +150,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             gd.setStroke(strokeWidth, strokeColor);
             textView.setBackgroundDrawable(gd);
              */
-
+            textView.setSingleLine();
             holder.names.addView(textView);
         }
 

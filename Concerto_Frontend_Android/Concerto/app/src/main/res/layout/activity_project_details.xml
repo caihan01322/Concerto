@@ -30,6 +30,7 @@
             android:layout_weight="9"
             android:layout_height="wrap_content"
             android:text="XX项目"
+            android:maxLines="1"
             android:gravity="center_horizontal"
             android:textSize="25sp"
             android:layout_marginLeft="25dp" />

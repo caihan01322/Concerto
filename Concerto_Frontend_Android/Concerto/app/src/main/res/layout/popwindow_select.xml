@@ -135,11 +135,11 @@
             android:id="@+id/et_order_urgent"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="8"
             android:layout_marginTop="5dp"
+            android:layout_weight="8"
+            android:hint="紧急程度"
             android:inputType="textPassword"
-            android:selectAllOnFocus="true"
-            android:hint="紧急程度"/>
+            android:selectAllOnFocus="true" />
         <ImageView
             android:id="@+id/iv_order_urgent"
             android:layout_width="0dp"

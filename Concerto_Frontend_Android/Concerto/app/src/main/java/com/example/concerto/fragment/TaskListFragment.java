@@ -2,15 +2,18 @@ package com.example.concerto.fragment;
 
 import android.os.Bundle;
 
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+
 
 import com.example.concerto.R;
 import com.example.concerto.bean.TagsItem;
@@ -36,17 +39,34 @@ public class TaskListFragment extends Fragment {
 
     private List<TaskItem> mtasks=new ArrayList<>();
     private List<TaskItem> completedTasks=new ArrayList<>();
+    TaskAdapter adapter;
+    TaskAdapter cadapter;
     private String data;
     JSONArray jsonArray;
+    String token;
+
+    long projectId=2;
+    public void setProjectId(long id){
+        projectId=id;
+    }
+
+    public  long getProjectId(){
+        return projectId;
+    }
 
 
 
-    int type;//0==推荐，1==今日，2==本周，3==本月
+
+    int type;//0==推荐，1==今日，2==本周，3==本月  4==项目详情页本周  5==项目详情页全部
 
     public TaskListFragment(int type) {
         this.type=type;
     }
 
+    public TaskListFragment(int type,long id) {
+        projectId=id;
+        this.type=type;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,14 +77,12 @@ public class TaskListFragment extends Fragment {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view= inflater.inflate(R.layout.fragment_task_list, container, false);
-        initData();
         RecyclerView recyclerView=view.findViewById(R.id.rv_task_list);//任务列表
         RecyclerView recyclerViewComplete=view.findViewById(R.id.rv_task_complete_list);//已完成的任务列表
 
@@ -72,16 +90,30 @@ public class TaskListFragment extends Fragment {
         LinearLayoutManager clinearLayoutManager=new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerViewComplete.setLayoutManager(clinearLayoutManager);
-
-        TaskAdapter adapter=new TaskAdapter(mtasks,this.getContext());
-        TaskAdapter cadapter=new TaskAdapter(completedTasks,this.getContext());
+        initData();
+        adapter=new TaskAdapter(mtasks,this.getContext(),this);
+        cadapter=new TaskAdapter(completedTasks,this.getContext(),this);
         adapter.setData(mtasks);
         cadapter.setData(completedTasks);
         recyclerView.setAdapter(adapter);
         recyclerViewComplete.setAdapter(cadapter);
 
-        
+        recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                return false;
+            }
 
+            @Override
+            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+            }
+        });
         return view;
     }
 
@@ -95,27 +127,44 @@ public class TaskListFragment extends Fragment {
             public void run() {
                 try {
                     String url = "";
-                    if(type==0){
-                        url="http://81.69.253.27:7777/User/Schedule/Recommend";
-                    }else if(type==1){
-                        url="http://81.69.253.27:7777/User/Schedule/day";
-                    }else if(type==2){
-                        url="http://81.69.253.27:7777/User/Schedule/Week";
-                    }else if(type==3){
-                        url="http://81.69.253.27:7777/User/Schedule/Month";
+                    switch (type){
+                        case 0:
+                            url="http://81.69.253.27:7777/User/Schedule/Recommend";
+                            break;
+                        case 1:
+                            url="http://81.69.253.27:7777/User/Schedule/day";
+                            break;
+                        case 2:
+                            url="http://81.69.253.27:7777/User/Schedule/Week";
+                            break;
+                        case 3:
+                            url="http://81.69.253.27:7777/User/Schedule/Month";
+                            break;
+                        case 4:
+                            url="http://81.69.253.27:7777/project/task/week";
+                            break;
+                        case 5:
+                            url="http://81.69.253.27:7777/project/task/all";
+                            break;
                     }
 
-                    String token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4In0.9i1K1-3jsGh3tbTh2eMmD64C3XOE-vX9c1JywsqSoT0";
+
+                    token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4In0.9i1K1-3jsGh3tbTh2eMmD64C3XOE-vX9c1JywsqSoT0";
                     OkHttpClient client=new OkHttpClient();
                     Request.Builder reqBuild = new Request.Builder();
-                    reqBuild.addHeader("token",token);
+                    if(type==0||type==1||type==2||type==3)
+                        reqBuild.addHeader("token",token);
+                    if(type==4||type==5) {
+                        reqBuild.addHeader("projectId", 2 + "");
+                    }
                     HttpUrl.Builder urlBuilder = HttpUrl.parse(url)
                             .newBuilder();
+                    urlBuilder.addQueryParameter("projectId", projectId+"");
                     reqBuild.url(urlBuilder.build());
                     Request request = reqBuild.build();
                     Response response = client.newCall(request).execute();
                     data=response.body().string();
-                    //Log.v("TaskListFragement",data);
+                    Log.v("TaskListFragement",data);
                     if(data != null && data.startsWith("\ufeff"))
                     {
                         data =  data.substring(1);
@@ -124,8 +173,7 @@ public class TaskListFragment extends Fragment {
 
                     JSONObject jsonObject=new JSONObject(data);
                     jsonArray=(JSONArray)jsonObject.getJSONArray("data");
-                    //Log.v("TaskListFragement",type+"--------------"+jsonArray.toString());
-                    //Log.v("TaskListFragement", "----"+jsonObject.getString("message")+"---------");
+
 
                 }catch (Exception e){
                     e.printStackTrace();
@@ -134,6 +182,7 @@ public class TaskListFragment extends Fragment {
         }).start();
 
     }
+
 
 
     //jsonArray=(JSONArray)jsonObject.getJSONArray("data");
@@ -206,7 +255,10 @@ public class TaskListFragment extends Fragment {
     }
 
 
-
-
-
+    public void completeTask(TaskItem task,int position){
+        mtasks.remove(position);
+        completedTasks.add(task);
+        adapter.setData(mtasks);
+        cadapter.setData(completedTasks);
+    }
 }

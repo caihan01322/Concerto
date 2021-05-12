@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,13 @@ import android.widget.Toast;
 
 import com.example.concerto.R;
 
+import org.json.JSONObject;
+
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 import static androidx.core.content.ContextCompat.getSystemService;
 
 
@@ -23,9 +31,11 @@ public class TasksDetailsFragement extends Fragment implements View.OnClickListe
 
     Button btn_copy;
     TextView tv_invitationCode;
+    String projectId;
+    JSONObject object;
 
-    public TasksDetailsFragement() {
-        // Required empty public constructor
+    public TasksDetailsFragement(JSONObject jsonObject) {
+       object=jsonObject;
     }
 
 
@@ -42,6 +52,7 @@ public class TasksDetailsFragement extends Fragment implements View.OnClickListe
         btn_copy=view.findViewById(R.id.btn_copy);
         tv_invitationCode=view.findViewById(R.id.tv_invitationCode);
         btn_copy.setOnClickListener(this);
+
         return  view;
     }
 

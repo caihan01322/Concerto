@@ -16,6 +16,10 @@ import com.example.concerto.adapter.ProjectDetailsAdapter;
 import com.example.concerto.util.PopWindowUtil;
 import com.google.android.material.tabs.TabLayout;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONStringer;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,24 +27,59 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
     TabLayout tabLayout;
     ViewPager viewPager;
     TextView tv_title;
+    TextView tv_project_details_title;
     ImageView iv_back;
     ImageView iv_select;//弹出筛选界面
     View view;
-    public  long projectId=2;
+    public String projectId="2";
     private PagerAdapter adapter;
     private List<String> titles;
+    JSONObject jsonObject;
 
+    public JSONObject getJsonObject() {
+        return jsonObject;
+    }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_details);
+        String jsonData=getIntent().getStringExtra("project");
+
+        //测试
+        jsonData="{" +
+                "            \"projectId\": 2,\n" +
+                "            \"projectName\": \"Edmundd\",\n" +
+                "            \"projectDescription\": \"Mioshu\",\n" +
+                "            \"projectStartTime\": \"2021-05-06\",\n" +
+                "            \"projectEndTime\": \"2021-05-07\",\n" +
+                "            \"admin\": {\n" +
+                "                \"userPhone\": null,\n" +
+                "                \"userName\": \"Edmund\",\n" +
+                "                \"userEmail\": \"1661135388@qq.com\",\n" +
+                "                \"userIntroducton\": null\n" +
+                "            }\n" +
+                "        }";
+
+        try {
+            jsonObject=new JSONObject(jsonData);
+            projectId=jsonObject.getString("projectId");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         iv_back=findViewById(R.id.iv_project_details_back);
         tv_title=findViewById(R.id.tv_project_details_title);
         iv_select=findViewById(R.id.iv_project_details_select);
         viewPager=findViewById(R.id.view_pager_project_details_title);
         tabLayout=findViewById(R.id.tab_project_details_layout_content);
+        tv_project_details_title=findViewById(R.id.tv_project_details_title);
+        try {
+            tv_project_details_title.setText(jsonObject.getString("projectName")+"项目");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         iv_select.setOnClickListener(this);
         iv_back.setOnClickListener(this);
         titles = new ArrayList<>();
@@ -48,9 +87,8 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
         titles.add("全部");
         titles.add("详情");
         titles.add("人员");
-        adapter=new ProjectDetailsAdapter(getSupportFragmentManager(),titles);
+        adapter=new ProjectDetailsAdapter(getSupportFragmentManager(),titles,jsonObject);
         viewPager.setAdapter(adapter);
-
         tabLayout.setupWithViewPager(viewPager);
     }
 

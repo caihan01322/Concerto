@@ -38,6 +38,7 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
     String tagData;
     String nameData;
     JSONArray jsonArray;
+    String token;
 
     List<String> tags;
     List<String> names;
@@ -85,7 +86,8 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
         line_time.setOnClickListener(this);
         line_urgent=conentView.findViewById(R.id.line_urgent);
         line_about_me=conentView.findViewById(R.id.line_about_me);
-
+        line_urgent.setOnClickListener(this);
+        line_about_me.setOnClickListener(this);
         GridLayoutManager mgr_tags=new GridLayoutManager(context,3);
         GridLayoutManager mgr_names=new GridLayoutManager(context,3);
         rv_tags.setLayoutManager(mgr_tags);
@@ -118,10 +120,6 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
     }
 
     public void initdata() {
-        for(int i=0;i<13;i++){
-            tags.add("tag111111"+i);
-            names.add("name"+i);
-        }
 
     }
 
@@ -138,8 +136,9 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
     @Override
     public void onClick(View v) {
 
-        //R.id.line.XX点击一下则打勾，再点击打勾取消
+
         switch (v.getId()){
+            //R.id.line.XX点击一下则打勾，再点击打勾取消
             case R.id.line_time:
                 switch (flag_time){
                     case 0:
@@ -182,13 +181,12 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
 
 
     public void getData() {
-
-
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    String tagsurl = "";
+                    token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4In0.9i1K1-3jsGh3tbTh2eMmD64C3XOE-vX9c1JywsqSoT0";
+                    String tagsurl = "http://81.69.253.27:7777/User/Schedule/Tag";
                     String nameUrl="";
                     OkHttpClient client=new OkHttpClient();
                     Request.Builder reqBuild = new Request.Builder();

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.concerto.R;
+import com.example.concerto.adapter.CandidateAdapter;
 import com.example.concerto.adapter.ParticipantsAdapter;
 import com.example.concerto.adapter.TaskAdapter;
 import com.example.concerto.adapter.UserAdapter;
@@ -35,16 +36,18 @@ public class ParticipantsFragment extends Fragment {
     RecyclerView participantsList;
     List<UserItem> candidates;
     List<UserItem> participants;
-    long projectId=2;
+    String projectId="2";
     String pdata;//参与者返回数据
     String cdata;//申请者返回数据
     JSONArray pjsonArray;
     JSONArray cjsonArray;
 
 
-    public ParticipantsFragment() {
+
+    public ParticipantsFragment(String id) {
         participants=new ArrayList<>();
         candidates=new ArrayList<>();
+        projectId=id;
     }
 
 
@@ -53,12 +56,13 @@ public class ParticipantsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getData();
+
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        initData();
+
     }
 
     @Override
@@ -72,7 +76,8 @@ public class ParticipantsFragment extends Fragment {
         candidateList.setLayoutManager(clinearLayoutManager);
         participantsList.setLayoutManager(plinearLayoutManager);
 
-        UserAdapter cadapter=new UserAdapter(candidates);
+        initData();
+        CandidateAdapter cadapter=new CandidateAdapter(candidates,projectId);
         cadapter.setMusers(candidates);
         ParticipantsAdapter padapter=new ParticipantsAdapter(participants);
         padapter.setMusers(participants);
