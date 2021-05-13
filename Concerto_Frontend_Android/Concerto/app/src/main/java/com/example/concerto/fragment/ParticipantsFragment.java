@@ -36,7 +36,7 @@ public class ParticipantsFragment extends Fragment {
     RecyclerView participantsList;
     List<UserItem> candidates;
     List<UserItem> participants;
-    String projectId="2";
+    String projectId;
     String pdata;//参与者返回数据
     String cdata;//申请者返回数据
     JSONArray pjsonArray;

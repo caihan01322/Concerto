@@ -68,11 +68,11 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.View
             }
         });
 
-        String result=sendOperation(projectId,userId,operation);
+        String result=sendOperation(projectId,userId,operation,position);
         return holder;
     }
 
-    public String sendOperation(String pid,long uid,String op){
+    public String sendOperation(String pid,long uid,String op,int position){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -105,6 +105,10 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.View
                     message=jsonObject.getString("message");
                     Log.v("test","*************"+jsonObject1);
                     int status = jsonObject1.getInt("status");
+                    if(status==200){
+                        musers.remove(position);
+                        notifyDataSetChanged();
+                    }
 
                 }catch (Exception e){
                     e.printStackTrace();

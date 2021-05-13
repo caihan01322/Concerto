@@ -1,5 +1,6 @@
 package com.example.concerto.fragment;
 
+import android.app.Notification;
 import android.os.Bundle;
 
 
@@ -8,6 +9,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -44,13 +47,17 @@ public class TaskListFragment extends Fragment {
     private String data;
     JSONArray jsonArray;
     String token;
+    String projectId;
 
-    long projectId=2;
-    public void setProjectId(long id){
+    public static Handler agendaHandler;
+    public  static Handler projectHandler;
+
+
+    public void setProjectId(String id){
         projectId=id;
     }
 
-    public  long getProjectId(){
+    public  String getProjectId(){
         return projectId;
     }
 
@@ -63,9 +70,9 @@ public class TaskListFragment extends Fragment {
         this.type=type;
     }
 
-    public TaskListFragment(int type,long id) {
-        projectId=id;
+    public TaskListFragment(int type,String id) {
         this.type=type;
+        projectId=id;
     }
 
     @Override
@@ -98,22 +105,6 @@ public class TaskListFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         recyclerViewComplete.setAdapter(cadapter);
 
-        recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-            @Override
-            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-                return false;
-            }
-
-            @Override
-            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-
-            }
-
-            @Override
-            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
-            }
-        });
         return view;
     }
 
@@ -155,11 +146,11 @@ public class TaskListFragment extends Fragment {
                     if(type==0||type==1||type==2||type==3)
                         reqBuild.addHeader("token",token);
                     if(type==4||type==5) {
-                        reqBuild.addHeader("projectId", 2 + "");
+                        reqBuild.addHeader("projectId", projectId);
                     }
                     HttpUrl.Builder urlBuilder = HttpUrl.parse(url)
                             .newBuilder();
-                    urlBuilder.addQueryParameter("projectId", projectId+"");
+                    urlBuilder.addQueryParameter("projectId", projectId);
                     reqBuild.url(urlBuilder.build());
                     Request request = reqBuild.build();
                     Response response = client.newCall(request).execute();
@@ -225,6 +216,13 @@ public class TaskListFragment extends Fragment {
                 }
                 task.setNames(nameList);
 
+                String subTaskNum=jsonObject.getString("subTaskNum");
+                String subTaskCompletedNum=jsonObject.getString("subTaskCompletedNum");
+                task.setSubTaskCompletedNum(subTaskCompletedNum);
+                task.setSubTaskNum(subTaskNum);
+
+
+                /*
                 //计算天数
                 String startTime=jsonObject.getString("taskStartTime");
                 String endTime=jsonObject.getString("taskEndTime");
@@ -235,7 +233,26 @@ public class TaskListFragment extends Fragment {
                 c1.setTime(inDate);
                 Calendar c2=Calendar.getInstance();
                 c2.setTime(outDate);
+
+
+
                 int days = c2.get(Calendar.DAY_OF_YEAR) - c1.get(Calendar.DAY_OF_YEAR);
+                */
+
+                /*
+                SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd");
+                String endTime=jsonObject.getString("taskEndTime");
+                Date endDate=formatter.parse(endTime);
+                Date nowDate = new Date(System.currentTimeMillis());
+                Calendar c1=Calendar.getInstance();
+                c1.setTime(nowDate);
+                Calendar c2=Calendar.getInstance();
+                c2.setTime(endDate);
+                int days = c2.get(Calendar.DAY_OF_YEAR) - c1.get(Calendar.DAY_OF_YEAR);
+
+                 */
+
+                int days=jsonObject.getInt("taskDays");
                 task.setDays(days);
 
                 //0未完成 1完成
@@ -257,8 +274,34 @@ public class TaskListFragment extends Fragment {
 
     public void completeTask(TaskItem task,int position){
         mtasks.remove(position);
+        task.setComplete(1);
         completedTasks.add(task);
         adapter.setData(mtasks);
         cadapter.setData(completedTasks);
     }
+
+
+    private void initHandle(){
+        //新建Handler对象
+        agendaHandler = new Handler(){
+            //handleMessage为处理消息的方法
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if(msg.what == 1) {
+
+                }
+            }
+        };
+
+        projectHandler = new Handler(){
+            //handleMessage为处理消息的方法
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if(msg.what == 1) {
+
+                }
+            }
+        };
+    }
+
 }

@@ -1,5 +1,7 @@
 package com.example.concerto.adapter;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -21,16 +23,19 @@ public class ProjectDetailsAdapter extends FragmentPagerAdapter {
     JSONObject object;
     String projectId;
 
-    public ProjectDetailsAdapter(@NonNull FragmentManager fm, List<String> datas, JSONObject jsonObject) {
+    public ProjectDetailsAdapter(@NonNull FragmentManager fm, List<String> datas, JSONObject jsonObject) throws JSONException {
         super(fm);
         this.titles = datas;
         object=jsonObject;
+        projectId=object.getString("projectId");
+        Log.v("test","*******888888888*******"+object);
+        Log.v("test","*******888888888*******"+projectId);
     }
 
     public void setList(List<String> datas) throws JSONException {
         this.titles.clear();
         this.titles.addAll(datas);
-        projectId=object.getString("projectId");
+
     }
 
     @Override
@@ -38,16 +43,16 @@ public class ProjectDetailsAdapter extends FragmentPagerAdapter {
         Fragment fragment = null;
         switch (position) {
             case 0:
-                fragment = new TaskListFragment(4,2);
+                fragment = new TaskListFragment(4,projectId);
                 break;
             case 1:
-                fragment = new TaskListFragment(5,2);
+                fragment = new TaskListFragment(5,projectId);
                 break;
             case 2:
                 fragment = new TasksDetailsFragement(object);
                 break;
             case 3:
-                fragment = new ParticipantsFragment("2");
+                fragment = new ParticipantsFragment(projectId);
                 break;
             default:
                 break;
@@ -69,5 +74,9 @@ public class ProjectDetailsAdapter extends FragmentPagerAdapter {
             plateName = plateName.substring(0, 8) ;
         }
         return plateName;
+    }
+
+    public void fun(){
+        //op
     }
 }

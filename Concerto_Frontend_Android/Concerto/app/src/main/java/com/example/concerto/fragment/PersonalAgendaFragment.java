@@ -99,7 +99,12 @@ public class PersonalAgendaFragment extends Fragment implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        PopWindowUtil popWindow = new PopWindowUtil(this.getActivity(),R.layout.popwindow_select,280,0,0);
+        PopWindowUtil popWindow = null;
+        try {
+            popWindow = new PopWindowUtil(0,this.getActivity(),R.layout.popwindow_select,280,0,0);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         popWindow.setOnDismissListener(() -> {
             WindowManager.LayoutParams lp1 = getActivity().getWindow().getAttributes();
             lp1.alpha = 1f;

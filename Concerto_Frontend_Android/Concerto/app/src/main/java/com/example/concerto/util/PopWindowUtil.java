@@ -2,9 +2,12 @@ package com.example.concerto.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -15,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.concerto.R;
 import com.example.concerto.adapter.GridAdapter;
+import com.example.concerto.bean.Condition;
+import com.example.concerto.fragment.TaskListFragment;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -35,11 +40,14 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
     int h,w;
     int x,y;
     int width;
+    int type;//0 日程筛选  1任务筛选
     String tagData;
     String nameData;
-    JSONArray jsonArray;
-    String token;
+    JSONArray tagJsonArray;
+    String token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4In0.9i1K1-3jsGh3tbTh2eMmD64C3XOE-vX9c1JywsqSoT0"; ;
 
+    GridAdapter adapter_tags;
+    GridAdapter adapter_names;
     List<String> tags;
     List<String> names;
     RecyclerView rv_tags;
@@ -50,6 +58,7 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
     ImageView iv_time;
     ImageView iv_urgent;
     ImageView iv_me;
+    Button btn_select;
 
     public void setLayout(int layout) {
         this.layout = layout;
@@ -60,13 +69,14 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
         this.width = w/2+width;
     }
 
-    public PopWindowUtil(final Activity context, int layout, int width, int x, int y){
+    //type:0==日程筛选  1==项目筛选
+    public PopWindowUtil(int type,final Activity context, int layout, int width, int x, int y) throws InterruptedException {
+        this.type=type;
         setLayout(layout);
         setWidth(width);
         this.x=x;
         this.y=y;
         createPopWindow(context);
-
     }
 
     public void createPopWindow(final Activity context){
@@ -75,6 +85,12 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
 
         conentView = inflater.inflate(layout, null);
 
+        getData();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         tags=new ArrayList<>();
         names=new ArrayList<>();
         rv_tags=conentView.findViewById(R.id.rv_tags);
@@ -88,17 +104,16 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
         line_about_me=conentView.findViewById(R.id.line_about_me);
         line_urgent.setOnClickListener(this);
         line_about_me.setOnClickListener(this);
+        btn_select=conentView.findViewById(R.id.btn_select);
+        btn_select.setOnClickListener(this);
         GridLayoutManager mgr_tags=new GridLayoutManager(context,3);
         GridLayoutManager mgr_names=new GridLayoutManager(context,3);
         rv_tags.setLayoutManager(mgr_tags);
         rv_names.setLayoutManager(mgr_names);
-
-
-
         initdata();
-        GridAdapter adapter_tags=new GridAdapter(tags);
+        adapter_tags=new GridAdapter(tags,0);
 
-        GridAdapter adapter_names=new GridAdapter(names);
+        adapter_names=new GridAdapter(names,1);
 
         rv_tags.setAdapter(adapter_tags);
         rv_names.setAdapter(adapter_names);
@@ -117,11 +132,12 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
         this.setOutsideTouchable(true);
         // 刷新状态
         this.update();
+
+        adapter_tags.setData(tags);
+        adapter_names.setData(names);
     }
 
-    public void initdata() {
 
-    }
 
     public void showPopupWindow(View parent) {
         if (!this.isShowing()) {
@@ -176,6 +192,9 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
                         break;
                 }
                 break;
+
+            case R.id.btn_select:
+                sendMsg();
         }
     }
 
@@ -185,12 +204,10 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
             @Override
             public void run() {
                 try {
-                    token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4In0.9i1K1-3jsGh3tbTh2eMmD64C3XOE-vX9c1JywsqSoT0";
                     String tagsurl = "http://81.69.253.27:7777/User/Schedule/Tag";
-                    String nameUrl="";
                     OkHttpClient client=new OkHttpClient();
                     Request.Builder reqBuild = new Request.Builder();
-                    //reqBuild.addHeader();
+                    reqBuild.addHeader("token",token);
                     HttpUrl.Builder urlBuilder = HttpUrl.parse(tagsurl)
                             .newBuilder();
                     reqBuild.url(urlBuilder.build());
@@ -202,11 +219,9 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
                     {
                         tagData =  tagData.substring(1);
                     }
-
-
                     JSONObject jsonObject=new JSONObject(tagData);
-                    jsonArray=(JSONArray)jsonObject.getJSONArray("data");
-
+                    tagJsonArray=(JSONArray)jsonObject.getJSONArray("data");
+                    Log.v("test","+++++++++++++++"+tagJsonArray)  ;
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -214,4 +229,40 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
         }).start();
 
     }
+
+
+    public void initdata() {
+        try {
+            for(int i=0;i<tagJsonArray.length();i++){
+                JSONObject object= tagJsonArray.getJSONObject(i);
+
+                Log.v("test","++++111111+++++++"+object);
+                tags.add(object.getString("tagContent"));
+                if(i>15)
+                    break;
+            }
+        }  catch (Exception e)  {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendMsg(){
+        Message msg1,msg2;
+        Condition agendaCondition;
+        Condition projectCondition;
+        if(type==0){
+            agendaCondition=new Condition(adapter_tags.getTags(),adapter_names.getNames());
+            msg1=new Message();
+            msg1.what=1;
+            msg1.obj=agendaCondition;
+            TaskListFragment.agendaHandler.sendMessage(msg1);
+        }else if(type==1){
+            projectCondition=new Condition(adapter_tags.getTags(),adapter_names.getNames());
+            msg2=new Message();
+            msg2.what=1;
+            msg2.obj=projectCondition;
+            TaskListFragment.projectHandler.sendMessage(msg2);
+        }
+    }
+
 }

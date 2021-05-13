@@ -38,7 +38,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="邮箱: "
+            android:text="邮箱:   "
             android:textSize="20sp" />
 
         <TextView
@@ -52,3 +52,6 @@
 
 
 </LinearLayout>
+
+
+

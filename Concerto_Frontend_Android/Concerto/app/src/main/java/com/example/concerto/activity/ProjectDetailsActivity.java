@@ -51,7 +51,7 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
         jsonData="{" +
                 "            \"projectId\": 2,\n" +
                 "            \"projectName\": \"Edmundd\",\n" +
-                "            \"projectDescription\": \"Mioshu\",\n" +
+                "            \"projectDescription\": \"xxxxxxxxxxxx\",\n" +
                 "            \"projectStartTime\": \"2021-05-06\",\n" +
                 "            \"projectEndTime\": \"2021-05-07\",\n" +
                 "            \"admin\": {\n" +
@@ -75,7 +75,7 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
         tabLayout=findViewById(R.id.tab_project_details_layout_content);
         tv_project_details_title=findViewById(R.id.tv_project_details_title);
         try {
-            tv_project_details_title.setText(jsonObject.getString("projectName")+"项目");
+            tv_project_details_title.setText(jsonObject.getString("projectName"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -87,7 +87,11 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
         titles.add("全部");
         titles.add("详情");
         titles.add("人员");
-        adapter=new ProjectDetailsAdapter(getSupportFragmentManager(),titles,jsonObject);
+        try {
+            adapter=new ProjectDetailsAdapter(getSupportFragmentManager(),titles,jsonObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
     }
@@ -97,7 +101,12 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.iv_project_details_select:
-                PopWindowUtil popWindow = new PopWindowUtil(this,R.layout.popwindow_select,280,0,0);
+                PopWindowUtil popWindow = null;
+                try {
+                    popWindow = new PopWindowUtil(1,this,R.layout.popwindow_select,280,0,0);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 popWindow.setOnDismissListener(() -> {
                     WindowManager.LayoutParams lp1 =getWindow().getAttributes();
                     lp1.alpha = 1f;
@@ -119,4 +128,6 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
         }
 
     }
+
+
 }

@@ -4,10 +4,13 @@ import android.app.Notification;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -20,7 +23,16 @@ import com.example.concerto.bean.TagsItem;
 import com.example.concerto.bean.TaskItem;
 import com.example.concerto.fragment.TaskListFragment;
 
+import org.json.JSONObject;
+
 import java.util.List;
+
+import okhttp3.HttpUrl;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
@@ -60,7 +72,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         TaskItem task=mtasks.get(position);
         int days=task.getDays();
-        holder.tv_days.setText(days+"天");
+
         holder.line.setBackgroundColor(Color.parseColor(colors[position%5]));
         holder.tv_title.setText(task.getTaskTitle());
 
@@ -76,24 +88,61 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         gdc.setCornerRadius(roundRadius);
         holder.tv_complete.setBackgroundDrawable(gdc);
         holder.tv_process.setBackground(gdc);
-        holder.timebar.setBackgroundColor(Color.parseColor(colors[position%5]));
+
 
         //如果完成则。。。
         if(task.getComplete()==1){
 
             holder.tv_complete.setTextColor(Color.parseColor(colors[position%5]));
             holder.line.setBackgroundColor(Color.parseColor("#808080"));
+            holder.tv_complete.setText("√");
         }
 
         if(task.getComplete()==0){
+            holder.timebar.setBackgroundColor(Color.parseColor(colors[position%5]));
+            if(days>0)
+                holder.tv_days.setText(days+"天");
+            else
+                holder.tv_days.setText("超时");
             holder.tv_complete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     TaskItem task=mtasks.get(position);
                     fragment.completeTask(task,position);
+
+                    //完成任务，将状态更新至服务器
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                String url = "http://81.69.253.27:7777/task/status"+"/"+task.getTaskId();
+                                OkHttpClient client=new OkHttpClient();
+                                MediaType JSON = MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");
+                                RequestBody requestBody = RequestBody.create(JSON,task.getTaskId());
+                                Request.Builder reqBuild = new Request.Builder();
+
+                                HttpUrl.Builder urlBuilder = HttpUrl.parse(url)
+                                        .newBuilder();
+                                reqBuild.url(urlBuilder.build());
+                                reqBuild.post(requestBody);
+                                Request request = reqBuild.build();
+
+                                Response response = client.newCall(request).execute();
+                                String data=response.body().string();
+                                Log.v("test","------"+data);
+
+
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
                 }
             });
         }
+
+
+        holder.tv_process.setText(task.getSubTaskCompletedNum()+"/"+task.getSubTaskNum());
 
         //添加Tags
         for(int i=0;i<task.getTags().size();i++){
@@ -162,6 +211,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     public int getItemCount() {
         return mtasks.size();
     }
+
+
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         LinearLayout task_item_layout;

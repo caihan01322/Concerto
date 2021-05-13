@@ -7,10 +7,28 @@ public class TaskItem {
     private  int complete=0;
     private String taskTitle;
     private String taskProgres;
+    String subTaskNum;
+    String subTaskCompletedNum;
     public List<TagsItem> tags;
     private int days;
     private List<String> names;
 
+
+    public String getSubTaskCompletedNum() {
+        return subTaskCompletedNum;
+    }
+
+    public String getSubTaskNum() {
+        return subTaskNum;
+    }
+
+    public void setSubTaskCompletedNum(String subTaskCompletedNum) {
+        this.subTaskCompletedNum = subTaskCompletedNum;
+    }
+
+    public void setSubTaskNum(String subTaskNum) {
+        this.subTaskNum = subTaskNum;
+    }
 
     public String getTaskId() {
         return taskId;
