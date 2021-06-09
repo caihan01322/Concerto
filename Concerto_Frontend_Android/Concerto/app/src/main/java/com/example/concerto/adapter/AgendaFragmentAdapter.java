@@ -11,6 +11,10 @@ import java.util.List;
 
 public class AgendaFragmentAdapter extends FragmentPagerAdapter {
     private List<String> titles;
+    Fragment fragment0 = new TaskListFragment(0);
+    Fragment fragment1 = new TaskListFragment(1);
+    Fragment fragment2 = new TaskListFragment(2);
+    Fragment fragment3 = new TaskListFragment(3);
 
     public AgendaFragmentAdapter(FragmentManager fm) {
         super(fm);
@@ -23,27 +27,41 @@ public class AgendaFragmentAdapter extends FragmentPagerAdapter {
         notifyDataSetChanged();
     }
 
+    public void refresh(){
+        if (fragment0 instanceof TaskListFragment){
+            ((TaskListFragment) fragment0).refresh();
+        }
+        if (fragment1 instanceof TaskListFragment){
+            ((TaskListFragment) fragment1).refresh();
+        }
+        if (fragment2 instanceof TaskListFragment){
+            ((TaskListFragment) fragment2).refresh();
+        }
+        if (fragment3 instanceof TaskListFragment){
+            ((TaskListFragment) fragment3).refresh();
+        }
+    }
+
     @Override
     public Fragment getItem(int position) {
         //0==推荐，1==今日，2==本周，3==本月
-        Fragment fragment=null;
         switch (position){
             case 0:
-                fragment = new TaskListFragment(0);
-                break;
+                fragment0 = new TaskListFragment(0);
+                return fragment0;
             case 1:
-                fragment = new TaskListFragment(1);
-                break;
+                fragment1 = new TaskListFragment(1);
+                return fragment1;
             case 2:
-                fragment = new TaskListFragment(2);
-                break;
+                fragment2 = new TaskListFragment(2);
+                return fragment2;
             case 3:
-                fragment = new TaskListFragment(3);
-                break;
+                fragment3 = new TaskListFragment(3);
+                return fragment3;
             default:
                 break;
         }
-        return fragment;
+        return fragment0;
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.example.concerto.fragment;
 
 import android.app.Notification;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 
@@ -19,6 +21,7 @@ import android.view.ViewGroup;
 
 
 import com.example.concerto.R;
+import com.example.concerto.bean.Condition;
 import com.example.concerto.bean.TagsItem;
 import com.example.concerto.bean.TaskItem;
 import com.example.concerto.adapter.TaskAdapter;
@@ -42,15 +45,12 @@ public class TaskListFragment extends Fragment {
 
     private List<TaskItem> mtasks=new ArrayList<>();
     private List<TaskItem> completedTasks=new ArrayList<>();
-    TaskAdapter adapter;
-    TaskAdapter cadapter;
+    private TaskAdapter adapter;
+    private TaskAdapter cadapter;
     private String data;
     JSONArray jsonArray;
-    String token;
+    String token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4In0.9i1K1-3jsGh3tbTh2eMmD64C3XOE-vX9c1JywsqSoT0";;
     String projectId;
-
-    public static Handler agendaHandler;
-    public  static Handler projectHandler;
 
 
     public void setProjectId(String id){
@@ -80,10 +80,14 @@ public class TaskListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         getData();
         try {
-            Thread.sleep(1000);
+            Thread.sleep(300);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public void refresh(){
+        removeLimit();
     }
 
     @Override
@@ -97,6 +101,7 @@ public class TaskListFragment extends Fragment {
         LinearLayoutManager clinearLayoutManager=new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerViewComplete.setLayoutManager(clinearLayoutManager);
+
         initData();
         adapter=new TaskAdapter(mtasks,this.getContext(),this);
         cadapter=new TaskAdapter(completedTasks,this.getContext(),this);
@@ -104,7 +109,6 @@ public class TaskListFragment extends Fragment {
         cadapter.setData(completedTasks);
         recyclerView.setAdapter(adapter);
         recyclerViewComplete.setAdapter(cadapter);
-
         return view;
     }
 
@@ -140,7 +144,6 @@ public class TaskListFragment extends Fragment {
                     }
 
 
-                    token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4In0.9i1K1-3jsGh3tbTh2eMmD64C3XOE-vX9c1JywsqSoT0";
                     OkHttpClient client=new OkHttpClient();
                     Request.Builder reqBuild = new Request.Builder();
                     if(type==0||type==1||type==2||type==3)
@@ -258,19 +261,26 @@ public class TaskListFragment extends Fragment {
                 //0未完成 1完成
                 int status=jsonObject.getInt("taskStatus");
                 task.setComplete(status);
+                //筛选
+                SharedPreferences sharedPreferences= getActivity().getSharedPreferences("data", Context.MODE_PRIVATE);
+                String titleLimit = sharedPreferences.getString("titleLimit","");
+                Log.d("limit",titleLimit);
                 if(status==0){
-                    mtasks.add(task);
+                    //if (task.getTaskTitle().contains(titleLimit))
+                        mtasks.add(task);
                 }else if(status==1){
-                    completedTasks.add(task);
+                    //if (task.getTaskTitle().contains(titleLimit))
+                        completedTasks.add(task);
                 }
 
             }
 
+            Log.v("test",type+"88888"+mtasks);
+            Log.v("test",type+"88888"+completedTasks);
         }catch (Exception e){
             e.printStackTrace();
         }
     }
-
 
     public void completeTask(TaskItem task,int position){
         mtasks.remove(position);
@@ -280,28 +290,29 @@ public class TaskListFragment extends Fragment {
         cadapter.setData(completedTasks);
     }
 
-
-    private void initHandle(){
-        //新建Handler对象
-        agendaHandler = new Handler(){
-            //handleMessage为处理消息的方法
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                if(msg.what == 1) {
-
-                }
+    private void removeLimit(){
+        SharedPreferences sharedPreferences= getActivity().getSharedPreferences("data", Context.MODE_PRIVATE);
+        String titleLimit = sharedPreferences.getString("titleLimit","");
+        Log.d("limit",titleLimit);
+        for (int i = mtasks.size()-1;i >= 0;i--) {
+            TaskItem mtask = mtasks.get(i);
+            if (!mtask.getTaskTitle().contains(titleLimit)){
+                mtasks.remove(i);
             }
-        };
-
-        projectHandler = new Handler(){
-            //handleMessage为处理消息的方法
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                if(msg.what == 1) {
-
-                }
+        }
+        for (int i = completedTasks.size()-1;i >= 0;i--) {
+            TaskItem mtask = completedTasks.get(i);
+            if (!mtask.getTaskTitle().contains(titleLimit)){
+                completedTasks.remove(i);
             }
-        };
+        }
+        adapter.notifyDataSetChanged();
+        cadapter.notifyDataSetChanged();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        removeLimit();
+    }
 }

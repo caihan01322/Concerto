@@ -68,6 +68,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         this.notifyDataSetChanged();
     }
 
+    public void setNewData(List<TaskItem> tasks){
+        mtasks.clear();
+        mtasks.addAll(tasks);
+        this.notifyDataSetChanged();
+        Log.v("testprojectselect","*******888888****");
+    }
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         TaskItem task=mtasks.get(position);

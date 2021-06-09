@@ -18,6 +18,7 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp">
         <EditText
+            android:id="@+id/et_select_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="8"
@@ -26,6 +27,7 @@
             android:selectAllOnFocus="true"
             />
         <ImageView
+            android:id="@+id/btn_select_title"
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:layout_weight="1"

@@ -2,12 +2,14 @@ package com.example.concerto.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -44,6 +46,9 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
     String tagData;
     String nameData;
     JSONArray tagJsonArray;
+    EditText et_title;
+    String title;
+    ImageView btn_select_title;
     String token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4In0.9i1K1-3jsGh3tbTh2eMmD64C3XOE-vX9c1JywsqSoT0"; ;
 
     GridAdapter adapter_tags;
@@ -84,7 +89,10 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         conentView = inflater.inflate(layout, null);
+        et_title=conentView.findViewById(R.id.et_select_title);
 
+        btn_select_title=conentView.findViewById(R.id.btn_select_title);
+        btn_select_title.setOnClickListener(this);
         getData();
         try {
             Thread.sleep(1000);
@@ -149,6 +157,7 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
     }
 
     int flag_time=0,flag_urgent=0,flag_me=0;
+
     @Override
     public void onClick(View v) {
 
@@ -193,8 +202,19 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
                 }
                 break;
 
-            case R.id.btn_select:
-                sendMsg();
+            //发送筛选条件
+            case R.id.btn_select_title:
+            case R.id.btn_select:{
+                //步骤1：创建一个SharedPreferences对象
+                SharedPreferences sharedPreferences= conentView.getContext().getSharedPreferences("data",Context.MODE_PRIVATE);
+                //步骤2： 实例化SharedPreferences.Editor对象
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                //步骤3：将获取过来的值放入文件
+                editor.putString("titleLimit", et_title.getText().toString());
+                //步骤4：提交
+                editor.commit();
+            }
+                break;
         }
     }
 
@@ -245,24 +265,4 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
             e.printStackTrace();
         }
     }
-
-    public void sendMsg(){
-        Message msg1,msg2;
-        Condition agendaCondition;
-        Condition projectCondition;
-        if(type==0){
-            agendaCondition=new Condition(adapter_tags.getTags(),adapter_names.getNames());
-            msg1=new Message();
-            msg1.what=1;
-            msg1.obj=agendaCondition;
-            TaskListFragment.agendaHandler.sendMessage(msg1);
-        }else if(type==1){
-            projectCondition=new Condition(adapter_tags.getTags(),adapter_names.getNames());
-            msg2=new Message();
-            msg2.what=1;
-            msg2.obj=projectCondition;
-            TaskListFragment.projectHandler.sendMessage(msg2);
-        }
-    }
-
 }

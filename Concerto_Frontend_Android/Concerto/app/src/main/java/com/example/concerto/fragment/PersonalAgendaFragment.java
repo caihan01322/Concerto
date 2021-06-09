@@ -52,7 +52,8 @@ public class PersonalAgendaFragment extends Fragment implements View.OnClickList
 
         test=view.findViewById(R.id.test);
 
-        
+
+
         test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,6 +61,8 @@ public class PersonalAgendaFragment extends Fragment implements View.OnClickList
                 startActivity(intent);
             }
         });
+
+
 
         iv_select.setOnClickListener(this);
         adapter.setList(titles);
@@ -110,6 +113,7 @@ public class PersonalAgendaFragment extends Fragment implements View.OnClickList
             lp1.alpha = 1f;
             getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
             getActivity().getWindow().setAttributes(lp1);
+            adapter.refresh();
         });
         popWindow.showPopupWindow(view.findViewById(R.id.iv_select));
         WindowManager.LayoutParams lp = getActivity().getWindow().getAttributes();

@@ -1,5 +1,7 @@
 package com.example.concerto.activity;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -76,5 +78,16 @@ public class NavActivity extends AppCompatActivity {
         });
     }
 
-
+    @Override
+    protected void onStop() {
+        //步骤1：创建一个SharedPreferences对象
+        SharedPreferences sharedPreferences= getSharedPreferences("data", Context.MODE_PRIVATE);
+        //步骤2： 实例化SharedPreferences.Editor对象
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        //步骤3：将获取过来的值放入文件
+        editor.putString("titleLimit", "");
+        //步骤4：提交
+        editor.commit();
+        super.onStop();
+    }
 }

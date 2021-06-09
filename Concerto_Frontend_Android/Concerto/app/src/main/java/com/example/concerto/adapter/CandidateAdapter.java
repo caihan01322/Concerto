@@ -56,6 +56,8 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.View
             @Override
             public void onClick(View v) {
                 userId=musers.get(position).getUserId();
+                musers.remove(position);
+                notifyDataSetChanged();
                 operation="true";
             }
         });
