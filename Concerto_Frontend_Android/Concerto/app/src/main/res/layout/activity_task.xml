@@ -53,7 +53,7 @@
             android:layout_height="230dp"
             android:layout_marginStart="20dp"
             android:layout_marginLeft="20dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/corner"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvEditRecord" />
@@ -72,12 +72,12 @@
 
         <EditText
             android:id="@+id/etTaskName"
-            android:background="@drawable/et_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="112dp"
             android:layout_marginLeft="108dp"
             android:layout_marginTop="87dp"
+            android:background="@drawable/et_name"
             android:text="XXXXXXXXXXXXX"
             android:textColor="#CCCCCC"
             android:textCursorDrawable="@null"
@@ -138,48 +138,50 @@
             android:layout_marginLeft="40dp"
             android:layout_marginTop="170dp"
             android:text="Tag"
+            android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView14"
+            android:id="@+id/tvTag1"
             android:layout_width="80dp"
-            android:layout_height="22dp"
+            android:layout_height="30dp"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/corner_gray"
             android:gravity="center"
             android:text="tag1"
-            android:textSize="9sp"
+            android:textSize="15sp"
             app:layout_constraintStart_toEndOf="@+id/textView8"
             app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
         <TextView
-            android:id="@+id/textView15"
+            android:id="@+id/tvTag2"
             android:layout_width="80dp"
-            android:layout_height="22dp"
+            android:layout_height="30dp"
             android:layout_marginStart="110dp"
             android:layout_marginLeft="110dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/corner_gray"
             android:gravity="center"
             android:text="tag2"
-            android:textSize="9sp"
+            android:textSize="15sp"
             app:layout_constraintStart_toEndOf="@+id/textView8"
             app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
         <TextView
-            android:id="@+id/textView16"
+            android:id="@+id/tvTag3"
             android:layout_width="80dp"
-            android:layout_height="22dp"
+            android:layout_height="30dp"
             android:layout_marginStart="200dp"
             android:layout_marginLeft="200dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/corner_gray"
             android:gravity="center"
             android:text="tag3"
-            android:textSize="9sp"
+            android:textSize="15sp"
             app:layout_constraintStart_toEndOf="@+id/textView8"
             app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
@@ -189,7 +191,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="40dp"
             android:layout_marginLeft="40dp"
-            android:layout_marginTop="210dp"
+            android:layout_marginTop="218dp"
             android:text="优先级"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
@@ -198,10 +200,10 @@
         <TextView
             android:id="@+id/tvEditPRI"
             android:layout_width="115dp"
-            android:layout_height="26dp"
+            android:layout_height="23dp"
             android:layout_marginStart="12dp"
             android:layout_marginLeft="12dp"
-            android:layout_marginTop="209dp"
+            android:layout_marginTop="219dp"
             android:text="优先级233333333"
             android:textColor="#CCCCCC"
             app:layout_constraintStart_toEndOf="@+id/textView9"
@@ -223,13 +225,13 @@
             android:id="@+id/tvEditJoiner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="57dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="8dp"
             android:text="R1 R2 R3"
             android:textColor="#CCCCCC"
-            app:layout_constraintStart_toEndOf="@+id/textView9"
-            app:layout_constraintTop_toBottomOf="@+id/textView14" />
+            app:layout_constraintStart_toEndOf="@+id/textView10"
+            app:layout_constraintTop_toBottomOf="@+id/tvEditPRI" />
 
         <TextView
             android:id="@+id/textView20"
@@ -314,6 +316,7 @@
             android:layout_marginTop="12dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/etMessage">
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvMessage"
                 android:layout_width="match_parent"

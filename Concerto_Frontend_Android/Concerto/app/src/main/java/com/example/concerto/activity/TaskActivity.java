@@ -30,12 +30,11 @@ import com.example.concerto.R;
 
 import com.example.concerto.bean.*;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -52,6 +51,22 @@ public class TaskActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView1;
     private HomeAdapter1 mAdapter1;
+
+    private int taskId;
+    private int taskVersion;
+    private String taskTitle;
+    private int taskPriority;
+    private int taskStatus;
+    private int taskType;
+    private Date taskStartTime;
+    private Date taskEndTime;
+    private List<Tags> tags;
+    private List<Participants> participants;
+    private List<SubTasks> subTasks;
+
+    private ArrayList<String> particName;
+    private ArrayList<String> tagContent;
+    private ArrayList<String> tagColor;
 
     private ArrayList<String> subTaskId;
     private ArrayList<String> title;
@@ -72,7 +87,8 @@ public class TaskActivity extends AppCompatActivity {
     private TextView tvCreateSubTask;
     private EditText etMessage;
     private TextView tvSaveMessage;
-    private List<Subtask> subTasks;      //子任务
+    private TextView tvTag1,tvTag2,tvTag3;
+
     private List<TaskComment> comments;  //评论
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -85,6 +101,13 @@ public class TaskActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
+
+        tags = new ArrayList<>();
+        particName = new ArrayList<>();
+        subTasks = new ArrayList<>();
+        tagContent = new ArrayList<>();
+        tagColor = new ArrayList<>();
+
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -121,24 +144,32 @@ public class TaskActivity extends AppCompatActivity {
         String url = "http://1.15.141.65:8866/task/" + taskId;
         Request request = new Request.Builder()
                 .url(url)//请求接口。如果需要传参拼接到接口后面。
+                .addHeader("token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2In0.BWVpUdSvtWB4DKwLpMcYiuxUBmAKBC1kfLvvEmuS61E")//头部添加token
                 .build();//创建Request 对象
         Response response = null;
         response = client.newCall(request).execute();//得到Response 对象
         if (response.isSuccessful()) {
             String strByJson = response.body().string();
             System.out.println(strByJson);
-//            Gson gson = new Gson();
-//            Type listType = new TypeToken<ArrayList<NewsBean>>(){}.getType();
-//            ArrayList<NewsBean> news = gson.fromJson(strByJson, listType);
-//            int i = 0;
-//            for (NewsBean newbean : news) {
-//                title.add(newbean.title);
-//                source.add(newbean.source);
-//                ptime.add(newbean.ptime);
-//                imgsrc.add(newbean.imgsrc);
-//                i++;
-//            }
-//            count = i;
+            Gson gson = new Gson();
+            Type listType = new TypeToken<JsonRootBean>(){}.getType();
+            JsonRootBean jsonRootBean = gson.fromJson(strByJson, listType);
+            if(jsonRootBean.getStatus()==200){
+                Data data = jsonRootBean.getData();
+                taskTitle = data.getTaskTitle();
+                taskStartTime = data.getTaskStartTime();
+                taskEndTime = data.getTaskEndTime();
+                taskPriority = data.getTaskPriority();
+                participants = data.getParticipants();
+                for(Participants p : participants){
+                    particName.add(p.getUserName());
+                }
+                tags = data.getTags();
+                for(Tags t : tags){
+                    tagContent.add(t.getTagContent());
+                    tagColor.add(t.getTagColor());
+                }
+            }
         }
     }
 
@@ -208,6 +239,7 @@ public class TaskActivity extends AppCompatActivity {
         });
 
         tvEditStartTime = (TextView) findViewById(R.id.tvEditStartTime);
+        tvEditStartTime.setText(simpleDateFormat.format(taskStartTime));
         tvEditStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -217,13 +249,9 @@ public class TaskActivity extends AppCompatActivity {
                 Calendar endDate = Calendar.getInstance();// 控件结束时间
                 endDate.set(2050, 11, 31);//该控件到2050年2月28日结束
                 try {
-                    Calendar c = Calendar.getInstance();
-                    c.set(2020,3,7);//4.7
-                    // 获取系统当前时间
-                    Date date = c.getTime();
-                    simpleDateFormat.format(date);
+                    simpleDateFormat.format(taskStartTime);
                     //指定控件初始值显示哪一天
-                    currentSystemDate.setTime(date);
+                    currentSystemDate.setTime(taskStartTime);
                 }catch (Exception e){
 
                 }
@@ -248,6 +276,7 @@ public class TaskActivity extends AppCompatActivity {
         });
 
         tvEditEndTime = (TextView) findViewById(R.id.tvEditEndTime);
+        tvEditEndTime.setText(simpleDateFormat.format(taskEndTime));
         tvEditEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -257,13 +286,9 @@ public class TaskActivity extends AppCompatActivity {
                 Calendar endDate = Calendar.getInstance();// 控件结束时间
                 endDate.set(2050, 11, 31);//该控件到2050年2月28日结束
                 try {
-                    Calendar c = Calendar.getInstance();
-                    c.set(2020,3,14);//4.7
-                    // 获取系统当前时间
-                    Date date = c.getTime();
-                    simpleDateFormat.format(date);
+                    simpleDateFormat.format(taskEndTime);
                     //指定控件初始值显示哪一天
-                    currentSystemDate.setTime(date);
+                    currentSystemDate.setTime(taskEndTime);
                 }catch (Exception e){
 
                 }
@@ -295,7 +320,7 @@ public class TaskActivity extends AppCompatActivity {
                 final EditText editText = (EditText) alertDialogView.findViewById(R.id.etTagName);
                 AlertDialog.Builder alertBuilder = new AlertDialog.Builder(TaskActivity.this);
                 alertBuilder.setView(alertDialogView);
-                alertBuilder.setTitle("请选择任务tag");
+                alertBuilder.setTitle("请添加任务tag");
                 alertBuilder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -316,18 +341,20 @@ public class TaskActivity extends AppCompatActivity {
             }
         });
 
+        final String[] items = {"普通", "有点紧急", "紧急"};
         tvEditPRI = (TextView) findViewById(R.id.tvEditPRI);
+        tvEditPRI.setText(items[taskPriority]);
         tvEditPRI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String[] items = {"普通", "有点紧急", "紧急"};
                 AlertDialog.Builder alertBuilder = new AlertDialog.Builder(TaskActivity.this);
                 alertBuilder.setTitle("请选择任务优先级");
-                alertBuilder.setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
+                alertBuilder.setSingleChoiceItems(items, taskPriority, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        tvEditPRI.setText(items[i]);
-                        Toast.makeText(TaskActivity.this, items[i], Toast.LENGTH_SHORT).show();
+                        taskPriority = i;
+                        tvEditPRI.setText(items[taskPriority]);
+                        Toast.makeText(TaskActivity.this, items[taskPriority], Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -351,14 +378,21 @@ public class TaskActivity extends AppCompatActivity {
         });
 
         tvEditJoiner = (TextView) findViewById(R.id.tvEditJoiner);
+        StringBuilder joiner = new StringBuilder();
+        for(String s : particName){
+            joiner.append(s).append(" ");
+        }
+        tvEditJoiner.setText(joiner.toString());
         tvEditJoiner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String[] items = {"R1", "R2", "R3", "R4"};
+                final String[] items = particName.toArray(new String[particName.size()]);
+                final boolean[] iStatus = new boolean[particName.size()];
+
                 AlertDialog.Builder alertBuilder = new AlertDialog.Builder(TaskActivity.this);
                 alertBuilder.setTitle("请选择任务参与者");
 
-                alertBuilder.setMultiChoiceItems(items, new boolean[]{true, true, true, false}, new DialogInterface.OnMultiChoiceClickListener() {
+                alertBuilder.setMultiChoiceItems(items, iStatus , new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i, boolean isChecked) {
                         if (isChecked){
@@ -400,9 +434,19 @@ public class TaskActivity extends AppCompatActivity {
             }
         });
 
-        String name = "XXXXXXXXXXXXX";
-        etTaskName.setText(name);
+        etTaskName.setText(taskTitle);
         etNameLostFocus(etTaskName);
+
+        tvTag1 = (TextView) findViewById(R.id.tvTag1);
+        tvTag1.setText(tags.get(0).getTagContent());
+        tvTag1.setBackgroundColor(Color.parseColor(tags.get(0).getTagColor()));
+        tvTag2 = (TextView) findViewById(R.id.tvTag2);
+        tvTag2.setText(tags.get(1).getTagContent());
+        tvTag2.setBackgroundColor(Color.parseColor(tags.get(1).getTagColor()));
+        tvTag3 = (TextView) findViewById(R.id.tvTag3);
+        tvTag3.setText(tags.get(2).getTagContent());
+        tvTag3.setBackgroundColor(Color.parseColor(tags.get(2).getTagColor()));
+
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rvSubTask);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
