@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -32,6 +33,10 @@ import com.example.concerto.bean.*;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
@@ -40,8 +45,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import top.defaults.colorpicker.ColorPickerView;
 
@@ -52,7 +59,7 @@ public class TaskActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView1;
     private HomeAdapter1 mAdapter1;
 
-    private int taskId;
+    private String taskId;
     private int taskVersion;
     private String taskTitle;
     private int taskPriority;
@@ -88,6 +95,7 @@ public class TaskActivity extends AppCompatActivity {
     private EditText etMessage;
     private TextView tvSaveMessage;
     private TextView tvTag1,tvTag2,tvTag3;
+    private TextView tvSaveInfo;
 
     private List<TaskComment> comments;  //评论
 
@@ -97,11 +105,14 @@ public class TaskActivity extends AppCompatActivity {
     private AlertDialog alertDialog2; //单选框
     private AlertDialog alertDialog3; //多选框
 
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
 
+        taskId = "83";
         tags = new ArrayList<>();
         particName = new ArrayList<>();
         subTasks = new ArrayList<>();
@@ -139,7 +150,6 @@ public class TaskActivity extends AppCompatActivity {
     }
 
     public void okhttp() throws IOException {
-        String taskId = "83";
         OkHttpClient client = new OkHttpClient();//创建OkHttpClient对象
         String url = "http://1.15.141.65:8866/task/" + taskId;
         Request request = new Request.Builder()
@@ -156,6 +166,8 @@ public class TaskActivity extends AppCompatActivity {
             JsonRootBean jsonRootBean = gson.fromJson(strByJson, listType);
             if(jsonRootBean.getStatus()==200){
                 Data data = jsonRootBean.getData();
+                taskId = data.getTaskId() + "";
+                taskVersion = data.getTaskVersion();
                 taskTitle = data.getTaskTitle();
                 taskStartTime = data.getTaskStartTime();
                 taskEndTime = data.getTaskEndTime();
@@ -260,7 +272,7 @@ public class TaskActivity extends AppCompatActivity {
                     @Override
                     public void onTimeSelect(Date date,View v) {
                         String choiceTime = simpleDateFormat.format(date);// 选择时间
-                        long longTime = date.getTime();// 日期long--例如：1595489105000
+                        taskStartTime = date;
                         tvEditStartTime.setText(choiceTime);
                     }
                 }).setDate(currentSystemDate)// 设置系统时间为当前时间
@@ -297,6 +309,7 @@ public class TaskActivity extends AppCompatActivity {
                     @Override
                     public void onTimeSelect(Date date,View v) {
                         String choiceTime = simpleDateFormat.format(date);// 选择时间
+                        taskEndTime = date;
                         tvEditEndTime.setText(choiceTime);
                     }
                 }).setDate(currentSystemDate)// 设置系统时间为当前时间
@@ -447,6 +460,23 @@ public class TaskActivity extends AppCompatActivity {
         tvTag3.setText(tags.get(2).getTagContent());
         tvTag3.setBackgroundColor(Color.parseColor(tags.get(2).getTagColor()));
 
+        tvSaveInfo = (TextView) findViewById(R.id.tvSaveInfo);
+        tvSaveInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            SaveInfo();
+                        } catch (IOException | JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                t.start();
+            }
+        });
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rvSubTask);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -461,6 +491,52 @@ public class TaskActivity extends AppCompatActivity {
         mRecyclerView1.setAdapter(mAdapter1);
     }
 
+    private void SaveInfo() throws IOException, JSONException {
+        OkHttpClient client = new OkHttpClient();//创建OkHttpClient对象
+        String url = "http://1.15.141.65:8866/task/";
+
+        JSONArray addTags =new JSONArray();
+        JSONArray delTags =new JSONArray();
+        JSONArray addParticipants =new JSONArray();
+        JSONArray delParticipants =new JSONArray();
+
+        JSONObject json = new JSONObject();
+        json.put("taskId",taskId);
+        json.put("taskVersionModifyUserId","1");
+        json.put("taskVersionDescription","修改了一大堆东西");
+        json.put("taskTitle",etTaskName.getText().toString());
+        json.put("taskType","0");
+        json.put("taskPriority",taskPriority);
+        json.put("taskStartTime",simpleDateFormat.format(taskStartTime));
+        json.put("taskEndTime",simpleDateFormat.format(taskEndTime));
+        json.put("taskVersion",taskVersion);
+        json.put("addTags",addTags);
+        json.put("delTags",delTags);
+        json.put("addParticipants",addParticipants);
+        json.put("delParticipants",delParticipants);
+
+        System.out.println(json.toString());
+        RequestBody body = RequestBody.create(JSON, json.toString());
+        Request request = new Request.Builder()
+                .url(url)//请求接口。如果需要传参拼接到接口后面。
+                .addHeader("token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2In0.BWVpUdSvtWB4DKwLpMcYiuxUBmAKBC1kfLvvEmuS61E")//头部添加token
+                .post(body)
+                .build();//创建Request 对象
+        Response response = null;
+        response = client.newCall(request).execute();//得到Response 对象
+        if (response.isSuccessful()) {
+            String strByJson = response.body().string();
+            System.out.println(strByJson);
+            JSONObject jsonObj = new JSONObject(strByJson);
+            int status = jsonObj.getInt("status");
+            String message = jsonObj.getString("message");
+            Object data = jsonObj.get("data");
+            taskVersion = Integer.parseInt(data.toString());
+            Looper.prepare();
+            Toast.makeText(TaskActivity.this,message,Toast.LENGTH_SHORT).show();
+            Looper.loop();
+        }
+    }
 
     // 重置edittext, 居中并失去焦点
     private void etNameLostFocus(EditText etName) {
