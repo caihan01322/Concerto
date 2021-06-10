@@ -37,6 +37,9 @@ public class NavActivity extends AppCompatActivity {
         tabLayout=findViewById(R.id.tab_layout);
         initPagerView();
         setTab(tabLayout, getLayoutInflater(), TAB_TITLES, TAB_IMGS,TAB_SELECTOR);
+
+        
+
     }
 
     //设置下方三个menu页面
@@ -80,14 +83,19 @@ public class NavActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        //步骤1：创建一个SharedPreferences对象
         SharedPreferences sharedPreferences= getSharedPreferences("data", Context.MODE_PRIVATE);
-        //步骤2： 实例化SharedPreferences.Editor对象
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        //步骤3：将获取过来的值放入文件
         editor.putString("titleLimit", "");
-        //步骤4：提交
         editor.commit();
         super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SharedPreferences sharedPreferences= getSharedPreferences("data", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("titleLimit", "");
+        editor.commit();
     }
 }

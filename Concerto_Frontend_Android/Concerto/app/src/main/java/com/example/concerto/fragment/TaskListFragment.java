@@ -53,6 +53,8 @@ public class TaskListFragment extends Fragment {
     String projectId;
 
 
+
+
     public void setProjectId(String id){
         projectId=id;
     }
@@ -109,6 +111,7 @@ public class TaskListFragment extends Fragment {
         cadapter.setData(completedTasks);
         recyclerView.setAdapter(adapter);
         recyclerViewComplete.setAdapter(cadapter);
+
         return view;
     }
 
@@ -157,7 +160,8 @@ public class TaskListFragment extends Fragment {
                     reqBuild.url(urlBuilder.build());
                     Request request = reqBuild.build();
                     Response response = client.newCall(request).execute();
-                    data=response.body().string();
+                    String temp=response.body().string();
+                    data=temp.replaceAll("null","{}");
                     Log.v("TaskListFragement",data);
                     if(data != null && data.startsWith("\ufeff"))
                     {
@@ -167,7 +171,7 @@ public class TaskListFragment extends Fragment {
 
                     JSONObject jsonObject=new JSONObject(data);
                     jsonArray=(JSONArray)jsonObject.getJSONArray("data");
-
+                    Log.v("TaskListFragement","-------"+type+"---------"+jsonArray.toString());
 
                 }catch (Exception e){
                     e.printStackTrace();
@@ -181,9 +185,11 @@ public class TaskListFragment extends Fragment {
 
     //jsonArray=(JSONArray)jsonObject.getJSONArray("data");
     public void initData(){
+        mtasks.clear();
+        completedTasks.clear();
         if(jsonArray==null){
 
-            Log.v("TaskListFragement","************NULL**************");
+            Log.v("TaskListFragement",type+"************NULL**************");
             return;
         }
 
@@ -198,24 +204,34 @@ public class TaskListFragment extends Fragment {
                 task.setTaskTitle(jsonObject.getString("taskTitle"));
                 JSONArray tags=jsonObject.getJSONArray("tags");
                 List<TagsItem> tagList=new ArrayList<>();
-                for(int j=0;j<tags.length();j++){
-                    JSONObject tag=tags.getJSONObject(j);
-                    String tagContent=tag.getString("tagContent");
-                    String tagColor=tag.getString("tagColor");
-                    TagsItem tagsItem=new TagsItem(tagContent,tagColor);
+                if(tags!=null){
+                    for(int j=0;j<tags.length();j++){
+                        JSONObject tag=tags.getJSONObject(j);
+                        String tagContent=tag.getString("tagContent");
+                        String tagColor=tag.getString("tagColor");
+                        TagsItem tagsItem=new TagsItem(tagContent,tagColor);
 
-                    tagList.add(tagsItem);
+                        tagList.add(tagsItem);
+                    }
                 }
                 task.setTags(tagList);
 
 
                 JSONArray names=jsonObject.getJSONArray("participants");
 
+                Log.v("names",type+"************"+names+"**************");
                 List<String> nameList=new ArrayList<>();
-                for(int j=0;j<names.length();j++){
-                    JSONObject nameobject=names.getJSONObject(j);
-                    String name=nameobject.getString("userName");
-                    nameList.add(name);
+
+                if(names.length()>0&&names!=null && !names.toString().equals("")){
+                    for(int j=0;j<names.length();j++){
+                        if(names.getJSONObject(j)!=null) {
+                            JSONObject nameobject = names.getJSONObject(j);
+                            if(!nameobject.isNull("userName")) {
+                                String name = nameobject.getString("userName");
+                                nameList.add(name);
+                            }
+                        }
+                    }
                 }
                 task.setNames(nameList);
 
@@ -275,10 +291,14 @@ public class TaskListFragment extends Fragment {
 
             }
 
-            Log.v("test",type+"88888"+mtasks);
-            Log.v("test",type+"88888"+completedTasks);
+            Log.v("test",type+"/////88888"+mtasks);
+            Log.v("test",type+"////88888"+completedTasks);
+
+
         }catch (Exception e){
             e.printStackTrace();
+        }finally {
+
         }
     }
 
@@ -313,6 +333,7 @@ public class TaskListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        initData();
         removeLimit();
     }
 }

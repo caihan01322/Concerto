@@ -157,6 +157,8 @@ public class ParticipantsFragment extends Fragment {
 
     public void initData(){
         try {
+            participants.clear();
+            candidates.clear();
             for(int i=0;i<pjsonArray.length();i++){
                 JSONObject pjsonObject=pjsonArray.getJSONObject(i);
                 UserItem puserItem=new UserItem();
@@ -172,7 +174,7 @@ public class ParticipantsFragment extends Fragment {
                 cuserItem.setUserId(cjsonObject.getInt("userId"));
                 cuserItem.setName(cjsonObject.getString("userName"));
                 cuserItem.setMailbox(cjsonObject.getString("userEmail"));
-                participants.add(cuserItem);
+                candidates.add(cuserItem);
             }
 
         }catch (Exception e){

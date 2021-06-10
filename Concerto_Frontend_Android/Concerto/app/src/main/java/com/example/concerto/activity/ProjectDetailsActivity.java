@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -36,6 +38,8 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
     private List<String> titles;
     JSONObject jsonObject;
 
+
+
     public JSONObject getJsonObject() {
         return jsonObject;
     }
@@ -45,7 +49,17 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_details);
+
+        SharedPreferences sharedPreferences= getSharedPreferences("data", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("titleLimit", "");
+        editor.commit();
+
+
+
+
         String jsonData=getIntent().getStringExtra("project");
+
 
         //测试
         jsonData="{" +
@@ -129,5 +143,32 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
 
     }
 
+
+
+    @Override
+    protected void onStop() {
+        SharedPreferences sharedPreferences= getSharedPreferences("data", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("titleLimit", "");
+        editor.commit();
+        super.onStop();
+    }
+
+    @Override
+    protected void onResume() {
+        SharedPreferences sharedPreferences= getSharedPreferences("data", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("titleLimit", "");
+        editor.commit();
+        super.onResume();
+    }
+
+    protected void onDestroy() {
+        super.onDestroy();
+        SharedPreferences sharedPreferences= getSharedPreferences("data", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("titleLimit", "");
+        editor.commit();
+    }
 
 }
