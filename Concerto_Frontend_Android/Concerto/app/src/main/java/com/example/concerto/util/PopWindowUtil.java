@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.concerto.R;
 import com.example.concerto.adapter.GridAdapter;
 import com.example.concerto.bean.Condition;
+import com.example.concerto.bean.UserItem;
 import com.example.concerto.fragment.TaskListFragment;
 
 import org.json.JSONArray;
@@ -50,6 +51,10 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
     String title;
     ImageView btn_select_title;
     String token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4In0.9i1K1-3jsGh3tbTh2eMmD64C3XOE-vX9c1JywsqSoT0"; ;
+    String projectId="2";
+
+    String pdata;//参与者返回数据
+    JSONArray pjsonArray;
 
     GridAdapter adapter_tags;
     GridAdapter adapter_names;
@@ -246,6 +251,36 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
                 }catch (Exception e){
                     e.printStackTrace();
                 }
+                String participantUrl="http://81.69.253.27:7777/project/member";
+                try {
+
+                    //参与者返回数据
+                    OkHttpClient pclient=new OkHttpClient();
+                    Request.Builder preqBuild = new Request.Builder();
+                    preqBuild.addHeader("projectId", projectId+"");
+                    HttpUrl.Builder urlBuilder = HttpUrl.parse(participantUrl)
+                            .newBuilder();
+                    urlBuilder.addQueryParameter("projectId", projectId+"");
+                    preqBuild.url(urlBuilder.build());
+                    Request prequest = preqBuild.build();
+                    Response presponse = pclient.newCall(prequest).execute();
+                    pdata=presponse.body().string();
+                    if(pdata != null && pdata.startsWith("\ufeff"))
+                    {
+                        pdata =  pdata.substring(1);
+                    }
+                    Log.v("ParticipantsFragment","--------参与者---------"+pdata);
+
+
+                    JSONObject pjsonObject=new JSONObject(pdata);
+                    if(pjsonObject.getJSONArray("data")!=null)
+                        pjsonArray=pjsonObject.getJSONArray("data");
+                    Log.v("ParticipantsFragment","--------参与者xx---------"+pjsonArray);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+
             }
         }).start();
 
@@ -265,5 +300,18 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
         }  catch (Exception e)  {
             e.printStackTrace();
         }
+
+
+        if(pjsonArray!=null)
+            try {
+                for(int i=0;i<pjsonArray.length();i++){
+                    JSONObject pjsonObject=pjsonArray.getJSONObject(i);
+                    UserItem puserItem=new UserItem();
+                    String nameobj=pjsonObject.getString("userName");
+                    names.add(nameobj);
+                }
+            }  catch (Exception e)  {
+                e.printStackTrace();
+            }
     }
 }

@@ -38,7 +38,10 @@ public class NavActivity extends AppCompatActivity {
         initPagerView();
         setTab(tabLayout, getLayoutInflater(), TAB_TITLES, TAB_IMGS,TAB_SELECTOR);
 
-        
+
+
+
+
 
     }
 

@@ -94,7 +94,8 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                         break;
                 }
 
-                Log.v("test","99999tag9999"+tags);
+                Log.v("testtags","99999tag9999"+tags);
+                Log.v("testnames","99999names9999"+names);
             }
         });
     }

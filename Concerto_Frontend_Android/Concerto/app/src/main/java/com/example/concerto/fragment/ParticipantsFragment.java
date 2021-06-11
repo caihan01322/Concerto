@@ -124,7 +124,6 @@ public class ParticipantsFragment extends Fragment {
                 }
 
             try {
-
                     //申请者返回数据
                     OkHttpClient cclient=new OkHttpClient();
                     Request.Builder creqBuild = new Request.Builder();
