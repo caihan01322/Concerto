@@ -74,11 +74,11 @@ public class TaskActivity extends AppCompatActivity {
     private ArrayList<String> particName;
     private ArrayList<String> tagContent;
     private ArrayList<String> tagColor;
-
-    private ArrayList<String> subTaskId;
-    private ArrayList<String> title;
-    private ArrayList<String> joiner;
-    private ArrayList<Integer> status;
+    private ArrayList<Integer> subTaskId;
+    private ArrayList<Integer> subTaskStatus;
+    private ArrayList<String> subTaskTitle;
+    private List<List<Participants>> subTaskPartic;
+    private ArrayList<String> subTaskJoiner;
 
     private ArrayList<String> user;
     private ArrayList<String> time;
@@ -118,6 +118,11 @@ public class TaskActivity extends AppCompatActivity {
         subTasks = new ArrayList<>();
         tagContent = new ArrayList<>();
         tagColor = new ArrayList<>();
+        subTaskId = new ArrayList<>();
+        subTaskStatus = new ArrayList<>();
+        subTaskTitle = new ArrayList<>();
+        subTaskPartic = new ArrayList<>();
+        subTaskJoiner = new ArrayList<>();
 
         Thread t = new Thread(new Runnable() {
             @Override
@@ -181,6 +186,28 @@ public class TaskActivity extends AppCompatActivity {
                     tagContent.add(t.getTagContent());
                     tagColor.add(t.getTagColor());
                 }
+                subTasks = data.getSubTasks();
+                for(SubTasks s : subTasks){
+                    subTaskId.add(s.getTaskId());
+                    subTaskStatus.add(s.getTaskStatus());
+                    subTaskTitle.add(s.getTaskTitle());
+                    if(s.getParticipants().size()!=0){
+                        subTaskPartic.add(s.getParticipants());
+                    } else {
+                        subTaskPartic.add(new ArrayList<Participants>());
+                    }
+                }
+                for(List<Participants> lp : subTaskPartic){
+                    StringBuilder joiner = new StringBuilder();
+                    if(lp.size()!=0){
+                        for(Participants p :lp){
+                            joiner.append(p.getUserName()).append(" ");
+                        }
+                    } else {
+                        joiner.append("暂无参与者");
+                    }
+                    subTaskJoiner.add(joiner.toString());
+                }
             }
         }
     }
@@ -194,24 +221,18 @@ public class TaskActivity extends AppCompatActivity {
             actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#9AD3BC")));
         }
 
-        subTaskId = new ArrayList<>();
-        title = new ArrayList<>();
-        joiner = new ArrayList<>();
-        status = new ArrayList<>();
-
         user = new ArrayList<>();
         time = new ArrayList<>();
         message = new ArrayList<>();
 
         for(int i=0;i<3;i++){
-            subTaskId.add(i+"");
-            title.add("子任务title"+i);
-            joiner.add("R"+(i*3+1)+" R"+(i*3+2)+" R"+(i*3+3));
-            status.add(1);
-
             user.add("letto"+(i+1));
             time.add("2021.3.10 13:37");
             message.add("balabalabalabalalalabalabala"+(i+1));
+        }
+
+        for(String s : subTaskJoiner){
+            System.out.println(s);
         }
 
         etMessage = (EditText) findViewById(R.id.etMessage);
@@ -569,20 +590,20 @@ public class TaskActivity extends AppCompatActivity {
     private OnRecyclerViewItemClickListener mOnRecyclerViewItemClickListener = new OnRecyclerViewItemClickListener() {
         @Override
         public void onRecyclerViewItemClickListener(RecyclerView.ViewHolder holder, View view, int pos) {
-            if(status.get(pos) == 1) {
+            if(subTaskStatus.get(pos) == 1) {
                 Drawable corner_white = ResourcesCompat.getDrawable(getResources(), R.drawable.corner_white, null);
                 corner_white.setBounds(0, 0, corner_white.getMinimumWidth(), corner_white.getMinimumHeight());
                 Button btnStatus = (Button) holder.itemView.findViewById(R.id.btnStatus);
                 btnStatus.setBackground(corner_white);
                 btnStatus.setText("");
-                status.set(pos,0);
+                subTaskStatus.set(pos,0);
             } else {
                 Drawable corner_darkgreen = ResourcesCompat.getDrawable(getResources(), R.drawable.corner_darkgreen, null);
                 corner_darkgreen.setBounds(0, 0, corner_darkgreen.getMinimumWidth(), corner_darkgreen.getMinimumHeight());
                 Button btnStatus = (Button) holder.itemView.findViewById(R.id.btnStatus);
                 btnStatus.setBackground(corner_darkgreen);
                 btnStatus.setText("√");
-                status.set(pos,1);
+                subTaskStatus.set(pos,1);
             }
             Toast.makeText(TaskActivity.this,"修改任务状态成功！",Toast.LENGTH_SHORT).show();
         }
@@ -598,7 +619,7 @@ public class TaskActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(MyViewHolder holder, int position) {
-            if(status.get(position) == 1) {
+            if(subTaskStatus.get(position) == 1) {
                 Drawable corner_darkgreen = ResourcesCompat.getDrawable(getResources(), R.drawable.corner_darkgreen, null);
                 corner_darkgreen.setBounds(0, 0, corner_darkgreen.getMinimumWidth(), corner_darkgreen.getMinimumHeight());
                 holder.status.setBackground(corner_darkgreen);
@@ -609,8 +630,8 @@ public class TaskActivity extends AppCompatActivity {
                 holder.status.setBackground(corner_white);
                 holder.status.setText("");
             }
-            holder.title.setText(title.get(position));
-            holder.joiner.setText(joiner.get(position));
+            holder.title.setText(subTaskTitle.get(position));
+            holder.joiner.setText(subTaskJoiner.get(position));
             holder.pos = position;
         }
 
