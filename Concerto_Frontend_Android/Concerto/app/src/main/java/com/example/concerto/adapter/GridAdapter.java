@@ -2,6 +2,8 @@ package com.example.concerto.adapter;
 
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,7 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.concerto.R;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
@@ -24,6 +28,7 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
     List<String> tags;
     List<String> names;
     int type;//0 tags 1 names;
+    Context context;
 
     public List<String> getNames() {
         return names;
@@ -33,11 +38,12 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
         return tags;
     }
 
-    public GridAdapter(List<String> datas, int type){
+    public GridAdapter(List<String> datas, int type ,Context context){
         data=datas;
         this.type=type;
         tags=new ArrayList<>();
         names=new ArrayList<>();
+        this.context=context;
     }
 
     public void setData(List<String> data) {
@@ -94,8 +100,22 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                         break;
                 }
 
+                /*
                 Log.v("testtags","99999tag9999"+tags);
                 Log.v("testnames","99999names9999"+names);
+
+                 */
+
+                Set<String>tagSet=new HashSet<>(tags);
+                Set<String>nameSet=new HashSet<>(names);
+                SharedPreferences sharedPreferences= context.getSharedPreferences("data", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putStringSet("tags",tagSet);
+                editor.putStringSet("names",nameSet);
+                editor.commit();
+
+                Log.v("testtags","99999tag9999"+tagSet);
+                Log.v("testnames","99999names9999"+nameSet);
             }
         });
     }

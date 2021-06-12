@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -278,9 +279,6 @@ public class TaskListFragment extends Fragment {
                 int status=jsonObject.getInt("taskStatus");
                 task.setComplete(status);
                 //筛选
-                SharedPreferences sharedPreferences= getActivity().getSharedPreferences("data", Context.MODE_PRIVATE);
-                String titleLimit = sharedPreferences.getString("titleLimit","");
-                Log.d("limit",titleLimit);
                 if(status==0){
                     //if (task.getTaskTitle().contains(titleLimit))
                         mtasks.add(task);
@@ -326,8 +324,91 @@ public class TaskListFragment extends Fragment {
                 completedTasks.remove(i);
             }
         }
+
+
+        Set<String>tags=sharedPreferences.getStringSet("tags",null);
+        Set<String>names=sharedPreferences.getStringSet("names",null);
+
+        if(tags!=null &&tags.size()>0){
+            for (int i=0;i<mtasks.size();i++) {
+                TaskItem mtask = mtasks.get(i);
+                int num=mtask.getTags().size();
+
+                int flag=0;
+
+                for(int j=0;j<num;j++){
+                    for(String tag:tags){
+                        if(mtask.getTags().get(j).tagContent.contains(tag)){
+                            flag=1;
+                        }
+                    }
+                }
+
+                if(flag==0)
+                    mtasks.remove(i);
+            }
+
+
+            for (int i=0;i<completedTasks.size();i++) {
+                TaskItem mtask = completedTasks.get(i);
+                int num=mtask.getTags().size();
+                int flag=0;
+                for(int j=0;j<num;j++){
+                    for(String tag:tags){
+                        if(mtask.getTags().get(j).tagContent!=""&&mtask.getTags().get(j).tagContent.contains(tag)){
+                            flag=1;
+                        }
+                    }
+                }
+
+                if(flag==0)
+                    completedTasks.remove(i);
+            }
+        }
+
+        if(names!=null&&names.size()>0){
+            for (int i = mtasks.size()-1;i >= 0;i--) {
+                TaskItem mtask = mtasks.get(i);
+                int num=mtask.getNames().size();
+                int flag=0;
+                for(int j=0;j<num;j++){
+                    for(String name:names){
+                        if(mtask.getNames().get(j).contains(name)){
+                            flag=1;
+                        }
+                    }
+                }
+
+                if(flag==0)
+                    mtasks.remove(i);
+            }
+
+            for (int i = completedTasks.size()-1;i >= 0;i--) {
+                TaskItem mtask = completedTasks.get(i);
+                int num=mtask.getNames().size();
+                int flag=0;
+                for(int j=0;j<num;j++){
+                    for(String name:names){
+                        if(mtask.getNames().get(j).contains(name)){
+                            flag=1;
+                        }
+                    }
+                }
+
+                if(flag==0)
+                    completedTasks.remove(i);
+            }
+        }
+
+
         adapter.notifyDataSetChanged();
         cadapter.notifyDataSetChanged();
+
+
+        Log.d("limittitle",titleLimit);
+        //Log.d("limittag",tags.toString());
+        //Log.d("limitname",names.toString());
+
     }
 
     @Override

@@ -70,6 +70,8 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
     ImageView iv_me;
     Button btn_select;
 
+
+
     public void setLayout(int layout) {
         this.layout = layout;
     }
@@ -100,7 +102,7 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
         btn_select_title.setOnClickListener(this);
         getData();
         try {
-            Thread.sleep(1000);
+            Thread.sleep(200);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -124,9 +126,9 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
         rv_tags.setLayoutManager(mgr_tags);
         rv_names.setLayoutManager(mgr_names);
         initdata();
-        adapter_tags=new GridAdapter(tags,0);
+        adapter_tags=new GridAdapter(tags,0,context);
 
-        adapter_names=new GridAdapter(names,1);
+        adapter_names=new GridAdapter(names,1,context);
 
         rv_tags.setAdapter(adapter_tags);
         rv_names.setAdapter(adapter_names);
@@ -210,13 +212,9 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
             //发送筛选条件
             case R.id.btn_select_title:
             case R.id.btn_select:{
-                //步骤1：创建一个SharedPreferences对象
                 SharedPreferences sharedPreferences= conentView.getContext().getSharedPreferences("data",Context.MODE_PRIVATE);
-                //步骤2： 实例化SharedPreferences.Editor对象
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                //步骤3：将获取过来的值放入文件
                 editor.putString("titleLimit", et_title.getText().toString());
-                //步骤4：提交
                 editor.commit();
 
             }
@@ -247,7 +245,7 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
                     }
                     JSONObject jsonObject=new JSONObject(tagData);
                     tagJsonArray=(JSONArray)jsonObject.getJSONArray("data");
-                    Log.v("test","+++++++++++++++"+tagJsonArray)  ;
+                    //Log.v("test","+++++++++++++++"+tagJsonArray)  ;
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -269,13 +267,13 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
                     {
                         pdata =  pdata.substring(1);
                     }
-                    Log.v("ParticipantsFragment","--------参与者---------"+pdata);
+                    //Log.v("ParticipantsFragment","--------参与者---------"+pdata);
 
 
                     JSONObject pjsonObject=new JSONObject(pdata);
                     if(pjsonObject.getJSONArray("data")!=null)
                         pjsonArray=pjsonObject.getJSONArray("data");
-                    Log.v("ParticipantsFragment","--------参与者xx---------"+pjsonArray);
+                   // Log.v("ParticipantsFragment","--------参与者xx---------"+pjsonArray);
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -292,7 +290,7 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
             for(int i=0;i<tagJsonArray.length();i++){
                 JSONObject object= tagJsonArray.getJSONObject(i);
 
-                Log.v("test","++++111111+++++++"+object);
+                //Log.v("test","++++111111+++++++"+object);
                 tags.add(object.getString("tagContent"));
                 if(i>15)
                     break;

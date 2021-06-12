@@ -101,4 +101,16 @@ public class NavActivity extends AppCompatActivity {
         editor.putString("titleLimit", "");
         editor.commit();
     }
+
+
+    @Override
+    protected void onResume() {
+        SharedPreferences sharedPreferences= getSharedPreferences("data", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("titleLimit", "");
+        editor.putStringSet("tags",null);
+        editor.putStringSet("names", null);
+        editor.commit();
+        super.onResume();
+    }
 }

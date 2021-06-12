@@ -150,6 +150,8 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
         SharedPreferences sharedPreferences= getSharedPreferences("data", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("titleLimit", "");
+        editor.putStringSet("tags", null);
+        editor.putStringSet("names", null);
         editor.commit();
         super.onStop();
     }
@@ -159,6 +161,8 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
         SharedPreferences sharedPreferences= getSharedPreferences("data", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("titleLimit", "");
+        editor.putStringSet("tags",null);
+        editor.putStringSet("names", null);
         editor.commit();
         super.onResume();
     }
@@ -168,6 +172,8 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
         SharedPreferences sharedPreferences= getSharedPreferences("data", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("titleLimit", "");
+        editor.putStringSet("tags",null);
+        editor.putStringSet("names", null);
         editor.commit();
     }
 
