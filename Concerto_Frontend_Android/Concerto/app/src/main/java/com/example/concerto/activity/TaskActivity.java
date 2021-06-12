@@ -215,7 +215,7 @@ public class TaskActivity extends AppCompatActivity {
     private void init(){
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null){
-            actionBar.setTitle("新建任务");
+            actionBar.setTitle("任务详情");
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#9AD3BC")));
@@ -489,7 +489,7 @@ public class TaskActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         try {
-                            SaveInfo();
+                            saveInfo();
                         } catch (IOException | JSONException e) {
                             e.printStackTrace();
                         }
@@ -512,7 +512,7 @@ public class TaskActivity extends AppCompatActivity {
         mRecyclerView1.setAdapter(mAdapter1);
     }
 
-    private void SaveInfo() throws IOException, JSONException {
+    private void saveInfo() throws IOException, JSONException {
         OkHttpClient client = new OkHttpClient();//创建OkHttpClient对象
         String url = "http://1.15.141.65:8866/task/";
 
@@ -589,7 +589,7 @@ public class TaskActivity extends AppCompatActivity {
 
     private OnRecyclerViewItemClickListener mOnRecyclerViewItemClickListener = new OnRecyclerViewItemClickListener() {
         @Override
-        public void onRecyclerViewItemClickListener(RecyclerView.ViewHolder holder, View view, int pos) {
+        public void onRecyclerViewItemClickListener(RecyclerView.ViewHolder holder, View view, final int pos) {
             if(subTaskStatus.get(pos) == 1) {
                 Drawable corner_white = ResourcesCompat.getDrawable(getResources(), R.drawable.corner_white, null);
                 corner_white.setBounds(0, 0, corner_white.getMinimumWidth(), corner_white.getMinimumHeight());
@@ -605,9 +605,43 @@ public class TaskActivity extends AppCompatActivity {
                 btnStatus.setText("√");
                 subTaskStatus.set(pos,1);
             }
-            Toast.makeText(TaskActivity.this,"修改任务状态成功！",Toast.LENGTH_SHORT).show();
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        updateStatus(pos);
+                    } catch (IOException | JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            t.start();
         }
     };
+
+    private void updateStatus(int pos) throws JSONException, IOException {
+        OkHttpClient client = new OkHttpClient();//创建OkHttpClient对象
+        String url = "http://1.15.141.65:8866//task/status/" + subTaskId.get(pos);
+
+        RequestBody body = RequestBody.create(JSON, "");
+        Request request = new Request.Builder()
+                .url(url)//请求接口。如果需要传参拼接到接口后面。
+                .addHeader("token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2In0.BWVpUdSvtWB4DKwLpMcYiuxUBmAKBC1kfLvvEmuS61E")//头部添加token
+                .post(body)
+                .build();//创建Request 对象
+        Response response = null;
+        response = client.newCall(request).execute();//得到Response 对象
+        if (response.isSuccessful()) {
+            String strByJson = response.body().string();
+            System.out.println(strByJson);
+            JSONObject jsonObj = new JSONObject(strByJson);
+            int status = jsonObj.getInt("status");
+            String message = jsonObj.getString("message");
+            Looper.prepare();
+            Toast.makeText(TaskActivity.this,subTaskTitle.get(pos)+message,Toast.LENGTH_SHORT).show();
+            Looper.loop();
+        }
+    }
 
     class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyViewHolder>{
         @Override
