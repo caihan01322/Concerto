@@ -59,6 +59,7 @@ public class TaskCreateActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private TaskCreateActivity.HomeAdapter1 mAdapter;
 
+    private String projectId;    //待交互
     private String taskId;
     private int taskVersion;
     private String taskTitle;
@@ -68,7 +69,7 @@ public class TaskCreateActivity extends AppCompatActivity {
     private Date taskStartTime;
     private Date taskEndTime;
     private List<Tags> tags;
-    private List<Participants> participants;
+    private List<Participants> participants;    //待交互
     private List<SubTasks> subTasks;
 
     private ArrayList<String> particName;
@@ -108,7 +109,7 @@ public class TaskCreateActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_create);
 
-        taskId = "83";
+//        taskId = "83";
         tags = new ArrayList<>();
         particName = new ArrayList<>();
         subTasks = new ArrayList<>();
@@ -120,23 +121,26 @@ public class TaskCreateActivity extends AppCompatActivity {
         subTaskPartic = new ArrayList<>();
         subTaskJoiner = new ArrayList<>();
 
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    okhttp();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        t.start();
-        try {
-            t.join();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        taskStartTime = new Date();
+        taskEndTime = new Date();
+
+//        Thread t = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    okhttp();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//        t.start();
+//        try {
+//            t.join();
+//        }
+//        catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         init();
     }
 
@@ -150,7 +154,7 @@ public class TaskCreateActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void okhttp() throws IOException {
+    public void okhttp() throws IOException {   //暂不使用
         OkHttpClient client = new OkHttpClient();//创建OkHttpClient对象
         String url = "http://1.15.141.65:8866/task/" + taskId;
         Request request = new Request.Builder()
@@ -211,7 +215,7 @@ public class TaskCreateActivity extends AppCompatActivity {
     private void init(){
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null){
-            actionBar.setTitle("新建子任务");
+            actionBar.setTitle("新建任务");
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#9AD3BC")));
@@ -222,13 +226,13 @@ public class TaskCreateActivity extends AppCompatActivity {
         }
 
         tvCreateSubTask = (TextView) findViewById(R.id.tvCreateSubTask1);
-        tvCreateSubTask.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(TaskCreateActivity.this, TaskCreateActivity.class);
-                startActivity(intent);
-            }
-        });
+//        tvCreateSubTask.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(TaskCreateActivity.this, TaskCreateActivity.class);
+//                startActivity(intent);
+//            }
+//        });   待改进
 
         tvEditStartTime = (TextView) findViewById(R.id.tvEditStartTime1);
         tvEditStartTime.setText(simpleDateFormat.format(taskStartTime));
@@ -374,7 +378,7 @@ public class TaskCreateActivity extends AppCompatActivity {
         for(String s : particName){
             joiner.append(s).append(" ");
         }
-        tvEditJoiner.setText(joiner.toString());
+        tvEditJoiner.setText("请选择任务参与者");
         tvEditJoiner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -428,33 +432,33 @@ public class TaskCreateActivity extends AppCompatActivity {
 
         etNameLostFocus(etTaskName);
 
-        tvTag1 = (TextView) findViewById(R.id.tvTag01);
-        tvTag1.setText(tags.get(0).getTagContent());
-        tvTag1.setBackgroundColor(Color.parseColor(tags.get(0).getTagColor()));
-        tvTag2 = (TextView) findViewById(R.id.tvTag02);
-        tvTag2.setText(tags.get(1).getTagContent());
-        tvTag2.setBackgroundColor(Color.parseColor(tags.get(1).getTagColor()));
-        tvTag3 = (TextView) findViewById(R.id.tvTag03);
-        tvTag3.setText(tags.get(2).getTagContent());
-        tvTag3.setBackgroundColor(Color.parseColor(tags.get(2).getTagColor()));
+//        tvTag1 = (TextView) findViewById(R.id.tvTag01);
+//        tvTag1.setText(tags.get(0).getTagContent());
+//        tvTag1.setBackgroundColor(Color.parseColor(tags.get(0).getTagColor()));
+//        tvTag2 = (TextView) findViewById(R.id.tvTag02);
+//        tvTag2.setText(tags.get(1).getTagContent());
+//        tvTag2.setBackgroundColor(Color.parseColor(tags.get(1).getTagColor()));
+//        tvTag3 = (TextView) findViewById(R.id.tvTag03);
+//        tvTag3.setText(tags.get(2).getTagContent());
+//        tvTag3.setBackgroundColor(Color.parseColor(tags.get(2).getTagColor()));
 
         tvSaveSubTask = (TextView) findViewById(R.id.tvSaveSubTask);
-        tvSaveSubTask.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Thread t = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            saveSubTask();
-                        } catch (IOException | JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-                t.start();
-            }
-        });
+//        tvSaveSubTask.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Thread t = new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            saveSubTask();
+//                        } catch (IOException | JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                });
+//                t.start();
+//            }
+//        });
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rvSubTask1);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -463,7 +467,7 @@ public class TaskCreateActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    private void saveSubTask() throws IOException, JSONException {
+    private void saveSubTask() throws IOException, JSONException {   //需要修改
         OkHttpClient client = new OkHttpClient();//创建OkHttpClient对象
         String url = "http://1.15.141.65:8866/task/";
 

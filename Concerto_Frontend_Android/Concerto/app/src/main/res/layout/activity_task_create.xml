@@ -66,7 +66,7 @@
             android:layout_marginLeft="108dp"
             android:layout_marginTop="87dp"
             android:background="@drawable/et_name"
-            android:hint="请输入子任务名称"
+            android:hint="请输入任务名称"
             android:textColor="#CCCCCC"
             android:textCursorDrawable="@null"
             app:layout_constraintStart_toStartOf="parent"
@@ -140,7 +140,6 @@
             android:layout_marginTop="20dp"
             android:background="@drawable/corner_gray"
             android:gravity="center"
-            android:text="tag1"
             android:textSize="15sp"
             app:layout_constraintStart_toEndOf="@+id/textView8"
             app:layout_constraintTop_toBottomOf="@+id/textView6" />
@@ -154,7 +153,6 @@
             android:layout_marginTop="20dp"
             android:background="@drawable/corner_gray"
             android:gravity="center"
-            android:text="tag2"
             android:textSize="15sp"
             app:layout_constraintStart_toEndOf="@+id/textView8"
             app:layout_constraintTop_toBottomOf="@+id/textView6" />
@@ -168,7 +166,6 @@
             android:layout_marginTop="20dp"
             android:background="@drawable/corner_gray"
             android:gravity="center"
-            android:text="tag3"
             android:textSize="15sp"
             app:layout_constraintStart_toEndOf="@+id/textView8"
             app:layout_constraintTop_toBottomOf="@+id/textView6" />
@@ -192,7 +189,7 @@
             android:layout_marginStart="12dp"
             android:layout_marginLeft="12dp"
             android:layout_marginTop="219dp"
-            android:text="请选择子任务优先级"
+            android:text="请选择任务优先级"
             android:textColor="#CCCCCC"
             app:layout_constraintStart_toEndOf="@+id/textView9"
             app:layout_constraintTop_toTopOf="parent" />
@@ -216,7 +213,7 @@
             android:layout_marginStart="12dp"
             android:layout_marginLeft="12dp"
             android:layout_marginTop="8dp"
-            android:text="R1 R2 R3"
+            android:text="请选择参与者"
             android:textColor="#CCCCCC"
             app:layout_constraintStart_toEndOf="@+id/textView10"
             app:layout_constraintTop_toBottomOf="@+id/tvEditPRI1" />
@@ -228,7 +225,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginLeft="24dp"
             android:layout_marginTop="310dp"
-            android:text="子任务列表"
+            android:text="子任务列表（请添加子任务）"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -237,8 +234,8 @@
             android:id="@+id/tvCreateSubTask1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="275dp"
-            android:layout_marginLeft="275dp"
+            android:layout_marginStart="165dp"
+            android:layout_marginLeft="165dp"
             android:layout_marginTop="18dp"
             android:text="+"
             android:textSize="24sp"
