@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -27,27 +28,57 @@ import android.widget.Toast;
 
 import com.bigkoo.pickerview.TimePickerView;
 import com.example.concerto.R;
+import com.example.concerto.bean.Data;
+import com.example.concerto.bean.JsonRootBean;
+import com.example.concerto.bean.Participants;
+import com.example.concerto.bean.SubTasks;
+import com.example.concerto.bean.Tags;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import top.defaults.colorpicker.ColorPickerView;
 
 public class TaskCreateActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
-    private TaskCreateActivity.HomeAdapter mAdapter;
+    private TaskCreateActivity.HomeAdapter1 mAdapter;
 
-    private RecyclerView mRecyclerView1;
-    private TaskCreateActivity.HomeAdapter1 mAdapter1;
+    private String taskId;
+    private int taskVersion;
+    private String taskTitle;
+    private int taskPriority;
+    private int taskStatus;
+    private int taskType;
+    private Date taskStartTime;
+    private Date taskEndTime;
+    private List<Tags> tags;
+    private List<Participants> participants;
+    private List<SubTasks> subTasks;
 
-    private ArrayList<String> subTaskId;
-    private ArrayList<String> title;
-    private ArrayList<String> joiner;
-    private ArrayList<Integer> status;
-
-    private ArrayList<String> user;
-    private ArrayList<String> time;
-    private ArrayList<String> message;
+    private ArrayList<String> particName;
+    private ArrayList<String> tagContent;
+    private ArrayList<String> tagColor;
+    private ArrayList<Integer> subTaskId;
+    private ArrayList<Integer> subTaskStatus;
+    private ArrayList<String> subTaskTitle;
+    private List<List<Participants>> subTaskPartic;
+    private ArrayList<String> subTaskJoiner;
 
     private EditText etTaskName;
     private TextView tvEditStartTime;
@@ -59,16 +90,53 @@ public class TaskCreateActivity extends AppCompatActivity {
     private TextView tvCreateSubTask;
     private EditText etMessage;
     private TextView tvSaveMessage;
+    private TextView tvTag1,tvTag2,tvTag3;
+    private TextView tvSaveSubTask;
+
+    //private List<TaskComment> comments;  //评论
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private AlertDialog alertDialog0; //对话框
     private AlertDialog alertDialog1; //多选框
     private AlertDialog alertDialog2; //单选框
     private AlertDialog alertDialog3; //多选框
+
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_create);
+
+        taskId = "83";
+        tags = new ArrayList<>();
+        particName = new ArrayList<>();
+        subTasks = new ArrayList<>();
+        tagContent = new ArrayList<>();
+        tagColor = new ArrayList<>();
+        subTaskId = new ArrayList<>();
+        subTaskStatus = new ArrayList<>();
+        subTaskTitle = new ArrayList<>();
+        subTaskPartic = new ArrayList<>();
+        subTaskJoiner = new ArrayList<>();
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    okhttp();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        t.start();
+        try {
+            t.join();
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         init();
     }
 
@@ -82,54 +150,78 @@ public class TaskCreateActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void okhttp() throws IOException {
+        OkHttpClient client = new OkHttpClient();//创建OkHttpClient对象
+        String url = "http://1.15.141.65:8866/task/" + taskId;
+        Request request = new Request.Builder()
+                .url(url)//请求接口。如果需要传参拼接到接口后面。
+                .addHeader("token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2In0.BWVpUdSvtWB4DKwLpMcYiuxUBmAKBC1kfLvvEmuS61E")//头部添加token
+                .build();//创建Request 对象
+        Response response = null;
+        response = client.newCall(request).execute();//得到Response 对象
+        if (response.isSuccessful()) {
+            String strByJson = response.body().string();
+            System.out.println(strByJson);
+            Gson gson = new Gson();
+            Type listType = new TypeToken<JsonRootBean>(){}.getType();
+            JsonRootBean jsonRootBean = gson.fromJson(strByJson, listType);
+            if(jsonRootBean.getStatus()==200){
+                Data data = jsonRootBean.getData();
+                taskId = data.getTaskId() + "";
+                taskVersion = data.getTaskVersion();
+                taskTitle = data.getTaskTitle();
+                taskStartTime = data.getTaskStartTime();
+                taskEndTime = data.getTaskEndTime();
+                taskPriority = data.getTaskPriority();
+                participants = data.getParticipants();
+                for(Participants p : participants){
+                    particName.add(p.getUserName());
+                }
+                tags = data.getTags();
+                for(Tags t : tags){
+                    tagContent.add(t.getTagContent());
+                    tagColor.add(t.getTagColor());
+                }
+                subTasks = data.getSubTasks();
+                for(SubTasks s : subTasks){
+                    subTaskId.add(s.getTaskId());
+                    subTaskStatus.add(s.getTaskStatus());
+                    subTaskTitle.add(s.getTaskTitle());
+                    if(s.getParticipants().size()!=0){
+                        subTaskPartic.add(s.getParticipants());
+                    } else {
+                        subTaskPartic.add(new ArrayList<Participants>());
+                    }
+                }
+                for(List<Participants> lp : subTaskPartic){
+                    StringBuilder joiner = new StringBuilder();
+                    if(lp.size()!=0){
+                        for(Participants p :lp){
+                            joiner.append(p.getUserName()).append(" ");
+                        }
+                    } else {
+                        joiner.append("暂无参与者");
+                    }
+                    subTaskJoiner.add(joiner.toString());
+                }
+            }
+        }
+    }
+
     private void init(){
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null){
-            actionBar.setTitle("新建任务");
+            actionBar.setTitle("新建子任务");
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#9AD3BC")));
         }
 
-        subTaskId = new ArrayList<>();
-        title = new ArrayList<>();
-        joiner = new ArrayList<>();
-        status = new ArrayList<>();
-
-        user = new ArrayList<>();
-        time = new ArrayList<>();
-        message = new ArrayList<>();
-
-        for(int i=0;i<3;i++){
-            subTaskId.add(i+"");
-            title.add("子任务title"+i);
-            joiner.add("R"+(i*3+1)+" R"+(i*3+2)+" R"+(i*3+3));
-            status.add(1);
-
-            user.add("letto"+(i+1));
-            time.add("2021.3.10 13:37");
-            message.add("balabalabalabalalalabalabala"+(i+1));
+        for(String s : subTaskJoiner){
+            System.out.println(s);
         }
 
-//        etMessage = (EditText) TaskCreateActivity.this.findViewById(R.id.etMessage);
-//        tvSaveMessage = (TextView) TaskCreateActivity.this.findViewById(R.id.tvSaveMessage);
-//        tvSaveMessage.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                String mes = etMessage.getText().toString();
-//                if(!mes.equals("")){
-//                    user.add("letto0");
-//                    time.add("2021.3.10 13:30");
-//                    message.add(mes);
-//                    mAdapter1.notifyDataSetChanged();
-//                    Toast.makeText(TaskCreateActivity.this,"留言成功！",Toast.LENGTH_LONG).show();
-//                } else {
-//                    Toast.makeText(TaskCreateActivity.this,"留言内容不能为空！",Toast.LENGTH_LONG).show();
-//                }
-//            }
-//        });
-
-        tvCreateSubTask = (TextView) TaskCreateActivity.this.findViewById(R.id.tvCreateSubTask);
+        tvCreateSubTask = (TextView) findViewById(R.id.tvCreateSubTask1);
         tvCreateSubTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,16 +230,8 @@ public class TaskCreateActivity extends AppCompatActivity {
             }
         });
 
-        tvEditRecord = (TextView) TaskCreateActivity.this.findViewById(R.id.tvEditRecord);
-        tvEditRecord.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(TaskCreateActivity.this, TaskEditRecActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        tvEditStartTime = (TextView) TaskCreateActivity.this.findViewById(R.id.tvEditStartTime);
+        tvEditStartTime = (TextView) findViewById(R.id.tvEditStartTime1);
+        tvEditStartTime.setText(simpleDateFormat.format(taskStartTime));
         tvEditStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -157,11 +241,9 @@ public class TaskCreateActivity extends AppCompatActivity {
                 Calendar endDate = Calendar.getInstance();// 控件结束时间
                 endDate.set(2050, 11, 31);//该控件到2050年2月28日结束
                 try {
-                    // 获取系统当前时间
-                    Date date = new Date();
-                    simpleDateFormat.format(date);
+                    simpleDateFormat.format(taskStartTime);
                     //指定控件初始值显示哪一天
-                    currentSystemDate.setTime(date);
+                    currentSystemDate.setTime(taskStartTime);
                 }catch (Exception e){
 
                 }
@@ -170,7 +252,7 @@ public class TaskCreateActivity extends AppCompatActivity {
                     @Override
                     public void onTimeSelect(Date date,View v) {
                         String choiceTime = simpleDateFormat.format(date);// 选择时间
-                        long longTime = date.getTime();// 日期long--例如：1595489105000
+                        taskStartTime = date;
                         tvEditStartTime.setText(choiceTime);
                     }
                 }).setDate(currentSystemDate)// 设置系统时间为当前时间
@@ -185,7 +267,8 @@ public class TaskCreateActivity extends AppCompatActivity {
             }
         });
 
-        tvEditEndTime = (TextView) TaskCreateActivity.this.findViewById(R.id.tvEditEndTime);
+        tvEditEndTime = (TextView) findViewById(R.id.tvEditEndTime1);
+        tvEditEndTime.setText(simpleDateFormat.format(taskEndTime));
         tvEditEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -195,11 +278,9 @@ public class TaskCreateActivity extends AppCompatActivity {
                 Calendar endDate = Calendar.getInstance();// 控件结束时间
                 endDate.set(2050, 11, 31);//该控件到2050年2月28日结束
                 try {
-                    // 获取系统当前时间
-                    Date date = new Date();
-                    simpleDateFormat.format(date);
+                    simpleDateFormat.format(taskEndTime);
                     //指定控件初始值显示哪一天
-                    currentSystemDate.setTime(date);
+                    currentSystemDate.setTime(taskEndTime);
                 }catch (Exception e){
 
                 }
@@ -208,6 +289,7 @@ public class TaskCreateActivity extends AppCompatActivity {
                     @Override
                     public void onTimeSelect(Date date,View v) {
                         String choiceTime = simpleDateFormat.format(date);// 选择时间
+                        taskEndTime = date;
                         tvEditEndTime.setText(choiceTime);
                     }
                 }).setDate(currentSystemDate)// 设置系统时间为当前时间
@@ -222,32 +304,24 @@ public class TaskCreateActivity extends AppCompatActivity {
             }
         });
 
-        tvEditTag = (TextView) TaskCreateActivity.this.findViewById(R.id.tvEditTag);
+        tvEditTag = (TextView) findViewById(R.id.tvEditTag1);
         tvEditTag.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String[] items = {"tag1", "tag2", "tag3"};
+                final View alertDialogView = getLayoutInflater().inflate (R.layout.alertdialog_layout, null, false);
+                final ColorPickerView colorPickerView = (ColorPickerView) alertDialogView.findViewById(R.id.colorPicker);
+                final EditText editText = (EditText) alertDialogView.findViewById(R.id.etTagName);
                 AlertDialog.Builder alertBuilder = new AlertDialog.Builder(TaskCreateActivity.this);
-                alertBuilder.setTitle("请选择任务tag");
-
-                alertBuilder.setMultiChoiceItems(items, new boolean[]{true, true, true}, new DialogInterface.OnMultiChoiceClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i, boolean isChecked) {
-                        if (isChecked){
-                            Toast.makeText(TaskCreateActivity.this, "选择" + items[i], Toast.LENGTH_SHORT).show();
-                        }else {
-                            Toast.makeText(TaskCreateActivity.this, "取消选择" + items[i], Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-
+                alertBuilder.setView(alertDialogView);
+                alertBuilder.setTitle("请添加任务tag");
                 alertBuilder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        System.out.println(editText.getText());
+                        System.out.println(colorPickerView.getColor());//???
                         alertDialog1.dismiss();
                     }
                 });
-
                 alertBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -260,18 +334,19 @@ public class TaskCreateActivity extends AppCompatActivity {
             }
         });
 
-        tvEditPRI = (TextView) TaskCreateActivity.this.findViewById(R.id.tvEditPRI);
+        final String[] items = {"普通", "有点紧急", "紧急"};
+        tvEditPRI = (TextView) findViewById(R.id.tvEditPRI1);
         tvEditPRI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String[] items = {"普通", "有点紧急", "紧急"};
                 AlertDialog.Builder alertBuilder = new AlertDialog.Builder(TaskCreateActivity.this);
                 alertBuilder.setTitle("请选择任务优先级");
-                alertBuilder.setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
+                alertBuilder.setSingleChoiceItems(items, taskPriority, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        tvEditPRI.setText(items[i]);
-                        Toast.makeText(TaskCreateActivity.this, items[i], Toast.LENGTH_SHORT).show();
+                        taskPriority = i;
+                        tvEditPRI.setText(items[taskPriority]);
+                        Toast.makeText(TaskCreateActivity.this, items[taskPriority], Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -294,15 +369,22 @@ public class TaskCreateActivity extends AppCompatActivity {
             }
         });
 
-        tvEditJoiner = (TextView) TaskCreateActivity.this.findViewById(R.id.tvEditJoiner);
+        tvEditJoiner = (TextView) findViewById(R.id.tvEditJoiner1);
+        StringBuilder joiner = new StringBuilder();
+        for(String s : particName){
+            joiner.append(s).append(" ");
+        }
+        tvEditJoiner.setText(joiner.toString());
         tvEditJoiner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String[] items = {"R1", "R2", "R3", "R4"};
+                final String[] items = particName.toArray(new String[particName.size()]);
+                final boolean[] iStatus = new boolean[particName.size()];
+
                 AlertDialog.Builder alertBuilder = new AlertDialog.Builder(TaskCreateActivity.this);
                 alertBuilder.setTitle("请选择任务参与者");
 
-                alertBuilder.setMultiChoiceItems(items, new boolean[]{true, true, true, false}, new DialogInterface.OnMultiChoiceClickListener() {
+                alertBuilder.setMultiChoiceItems(items, iStatus , new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i, boolean isChecked) {
                         if (isChecked){
@@ -332,7 +414,7 @@ public class TaskCreateActivity extends AppCompatActivity {
             }
         });
 
-        etTaskName = (EditText) TaskCreateActivity.this.findViewById(R.id.etTaskName);
+        etTaskName = (EditText) findViewById(R.id.etTaskName1);
         etTaskName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -344,23 +426,89 @@ public class TaskCreateActivity extends AppCompatActivity {
             }
         });
 
-        String name = "XXXXXXXXXXXXX";
-        etTaskName.setText(name);
         etNameLostFocus(etTaskName);
 
-//        mRecyclerView = (RecyclerView) TaskCreateActivity.this.findViewById(R.id.rvSubTask);
-//        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        //mRecyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
-//        mAdapter = new TaskCreateActivity.HomeAdapter();
-//        mRecyclerView.setAdapter(mAdapter);
-//
-//        mRecyclerView1 = (RecyclerView) TaskCreateActivity.this.findViewById(R.id.rvMessage);
-//        mRecyclerView1.setLayoutManager(new LinearLayoutManager(this));
-//        //mRecyclerView1.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
-//        mAdapter1 = new TaskCreateActivity.HomeAdapter1();
-//        mRecyclerView1.setAdapter(mAdapter1);
+        tvTag1 = (TextView) findViewById(R.id.tvTag01);
+        tvTag1.setText(tags.get(0).getTagContent());
+        tvTag1.setBackgroundColor(Color.parseColor(tags.get(0).getTagColor()));
+        tvTag2 = (TextView) findViewById(R.id.tvTag02);
+        tvTag2.setText(tags.get(1).getTagContent());
+        tvTag2.setBackgroundColor(Color.parseColor(tags.get(1).getTagColor()));
+        tvTag3 = (TextView) findViewById(R.id.tvTag03);
+        tvTag3.setText(tags.get(2).getTagContent());
+        tvTag3.setBackgroundColor(Color.parseColor(tags.get(2).getTagColor()));
+
+        tvSaveSubTask = (TextView) findViewById(R.id.tvSaveSubTask);
+        tvSaveSubTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            saveSubTask();
+                        } catch (IOException | JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                t.start();
+            }
+        });
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.rvSubTask1);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        //mRecyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
+        mAdapter = new TaskCreateActivity.HomeAdapter1();
+        mRecyclerView.setAdapter(mAdapter);
     }
 
+    private void saveSubTask() throws IOException, JSONException {
+        OkHttpClient client = new OkHttpClient();//创建OkHttpClient对象
+        String url = "http://1.15.141.65:8866/task/";
+
+        JSONArray addTags =new JSONArray();
+        JSONArray delTags =new JSONArray();
+        JSONArray addParticipants =new JSONArray();
+        JSONArray delParticipants =new JSONArray();
+
+        JSONObject json = new JSONObject();
+        json.put("taskId",taskId);
+        json.put("taskVersionModifyUserId","1");
+        json.put("taskVersionDescription","修改了一大堆东西");
+        json.put("taskTitle",etTaskName.getText().toString());
+        json.put("taskType","0");
+        json.put("taskPriority",taskPriority);
+        json.put("taskStartTime",simpleDateFormat.format(taskStartTime));
+        json.put("taskEndTime",simpleDateFormat.format(taskEndTime));
+        json.put("taskVersion",taskVersion);
+        json.put("addTags",addTags);
+        json.put("delTags",delTags);
+        json.put("addParticipants",addParticipants);
+        json.put("delParticipants",delParticipants);
+
+        System.out.println(json.toString());
+        RequestBody body = RequestBody.create(JSON, json.toString());
+        Request request = new Request.Builder()
+                .url(url)//请求接口。如果需要传参拼接到接口后面。
+                .addHeader("token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2In0.BWVpUdSvtWB4DKwLpMcYiuxUBmAKBC1kfLvvEmuS61E")//头部添加token
+                .post(body)
+                .build();//创建Request 对象
+        Response response = null;
+        response = client.newCall(request).execute();//得到Response 对象
+        if (response.isSuccessful()) {
+            String strByJson = response.body().string();
+            System.out.println(strByJson);
+            JSONObject jsonObj = new JSONObject(strByJson);
+            int status = jsonObj.getInt("status");
+            String message = jsonObj.getString("message");
+            Object data = jsonObj.get("data");
+            taskVersion = Integer.parseInt(data.toString());
+            Looper.prepare();
+            Toast.makeText(TaskCreateActivity.this,message,Toast.LENGTH_SHORT).show();
+            Looper.loop();
+        }
+    }
 
     // 重置edittext, 居中并失去焦点
     private void etNameLostFocus(EditText etName) {
@@ -390,39 +538,38 @@ public class TaskCreateActivity extends AppCompatActivity {
         public void onRecyclerViewItemClickListener(RecyclerView.ViewHolder holder, View view, int pos);
     }
 
-    private TaskCreateActivity.OnRecyclerViewItemClickListener mOnRecyclerViewItemClickListener = new TaskCreateActivity.OnRecyclerViewItemClickListener() {
+    private TaskActivity.OnRecyclerViewItemClickListener mOnRecyclerViewItemClickListener = new TaskActivity.OnRecyclerViewItemClickListener() {
         @Override
-        public void onRecyclerViewItemClickListener(RecyclerView.ViewHolder holder, View view, int pos) {
-            if(status.get(pos) == 1) {
+        public void onRecyclerViewItemClickListener(RecyclerView.ViewHolder holder, View view, final int pos) {
+            if(subTaskStatus.get(pos) == 1) {
                 Drawable corner_white = ResourcesCompat.getDrawable(getResources(), R.drawable.corner_white, null);
                 corner_white.setBounds(0, 0, corner_white.getMinimumWidth(), corner_white.getMinimumHeight());
                 Button btnStatus = (Button) holder.itemView.findViewById(R.id.btnStatus);
                 btnStatus.setBackground(corner_white);
                 btnStatus.setText("");
-                status.set(pos,0);
+                subTaskStatus.set(pos,0);
             } else {
                 Drawable corner_darkgreen = ResourcesCompat.getDrawable(getResources(), R.drawable.corner_darkgreen, null);
                 corner_darkgreen.setBounds(0, 0, corner_darkgreen.getMinimumWidth(), corner_darkgreen.getMinimumHeight());
                 Button btnStatus = (Button) holder.itemView.findViewById(R.id.btnStatus);
                 btnStatus.setBackground(corner_darkgreen);
                 btnStatus.setText("√");
-                status.set(pos,1);
+                subTaskStatus.set(pos,1);
             }
-            Toast.makeText(TaskCreateActivity.this,"修改任务状态成功！",Toast.LENGTH_SHORT).show();
         }
     };
 
-    class HomeAdapter extends RecyclerView.Adapter<TaskCreateActivity.HomeAdapter.MyViewHolder>{
+    class HomeAdapter1 extends RecyclerView.Adapter<TaskCreateActivity.HomeAdapter1.MyViewHolder>{
         @Override
-        public TaskCreateActivity.HomeAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public TaskCreateActivity.HomeAdapter1.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(TaskCreateActivity.this).inflate(R.layout.item_task,parent,false);
-            TaskCreateActivity.HomeAdapter.MyViewHolder holder = new TaskCreateActivity.HomeAdapter.MyViewHolder(view);
+            TaskCreateActivity.HomeAdapter1.MyViewHolder holder = new TaskCreateActivity.HomeAdapter1.MyViewHolder(view);
             return holder;
         }
 
         @Override
-        public void onBindViewHolder(TaskCreateActivity.HomeAdapter.MyViewHolder holder, int position) {
-            if(status.get(position) == 1) {
+        public void onBindViewHolder(TaskCreateActivity.HomeAdapter1.MyViewHolder holder, int position) {
+            if(subTaskStatus.get(position) == 1) {
                 Drawable corner_darkgreen = ResourcesCompat.getDrawable(getResources(), R.drawable.corner_darkgreen, null);
                 corner_darkgreen.setBounds(0, 0, corner_darkgreen.getMinimumWidth(), corner_darkgreen.getMinimumHeight());
                 holder.status.setBackground(corner_darkgreen);
@@ -433,8 +580,8 @@ public class TaskCreateActivity extends AppCompatActivity {
                 holder.status.setBackground(corner_white);
                 holder.status.setText("");
             }
-            holder.title.setText(title.get(position));
-            holder.joiner.setText(joiner.get(position));
+            holder.title.setText(subTaskTitle.get(position));
+            holder.joiner.setText(subTaskJoiner.get(position));
             holder.pos = position;
         }
 
@@ -462,41 +609,6 @@ public class TaskCreateActivity extends AppCompatActivity {
             }
             private final void _click(View v) {
                 mOnRecyclerViewItemClickListener.onRecyclerViewItemClickListener(this, v, pos);
-            }
-        }
-    }
-
-    class HomeAdapter1 extends RecyclerView.Adapter<TaskCreateActivity.HomeAdapter1.MyViewHolder>{
-        @Override
-        public TaskCreateActivity.HomeAdapter1.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(TaskCreateActivity.this).inflate(R.layout.item_message,parent,false);
-            TaskCreateActivity.HomeAdapter1.MyViewHolder holder = new TaskCreateActivity.HomeAdapter1.MyViewHolder(view);
-            return holder;
-        }
-
-        @Override
-        public void onBindViewHolder(TaskCreateActivity.HomeAdapter1.MyViewHolder holder, int position) {
-            holder.user.setText(user.get(position));
-            holder.time.setText(time.get(position));
-            holder.message.setText(message.get(position));
-            holder.pos = position;
-        }
-
-        @Override
-        public int getItemCount() {
-            return user.size();
-        }
-
-        class MyViewHolder extends RecyclerView.ViewHolder {
-            TextView user;
-            TextView time;
-            TextView message;
-            int pos;
-            public MyViewHolder(View itemView) {
-                super(itemView);
-                user = (TextView) itemView.findViewById(R.id.tvUser);
-                time = (TextView) itemView.findViewById(R.id.tvTime);
-                message = (TextView) itemView.findViewById(R.id.tvMessage);
             }
         }
     }
