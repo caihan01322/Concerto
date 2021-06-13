@@ -9,7 +9,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.example.concerto.fragment.ParticipantsFragment;
 import com.example.concerto.fragment.TasksDetailsFragement;
-import com.example.concerto.fragment.MyInformationFragment;
+
 
 import com.example.concerto.fragment.TaskListFragment;
 

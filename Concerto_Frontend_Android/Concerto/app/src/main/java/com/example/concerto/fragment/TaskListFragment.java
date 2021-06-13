@@ -131,7 +131,7 @@ public class TaskListFragment extends Fragment {
                             url="http://81.69.253.27:7777/User/Schedule/Recommend";
                             break;
                         case 1:
-                            url="http://81.69.253.27:7777/User/Schedule/day";
+                            url="http://81.69.253.27:7777/User/Schedule/Day";
                             break;
                         case 2:
                             url="http://81.69.253.27:7777/User/Schedule/Week";

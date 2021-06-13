@@ -4,7 +4,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.example.concerto.fragment.MyInformationFragment;
+
+import com.example.concerto.fragment.MyInformationFragement;
 import com.example.concerto.fragment.MyProjectFragment;
 import com.example.concerto.fragment.PersonalAgendaFragment;
 
@@ -24,7 +25,7 @@ public class MenuFragmentAdapter extends FragmentPagerAdapter {
                 fragment = new MyProjectFragment();
                 break;
             case 2:
-                fragment = new MyInformationFragment();
+                fragment = new MyInformationFragement();
                 break;
             default:
                 break;
