@@ -1,5 +1,7 @@
 package com.example.concerto.adapter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.concerto.R;
+
+import com.example.concerto.activity.ProjectDetailsActivity;
 import com.example.concerto.bean.SubProject;
 
 import java.util.List;
@@ -28,6 +32,7 @@ public class SubProjectAdapter extends RecyclerView.Adapter<SubProjectAdapter.Vi
             description = (TextView)view.findViewById(R.id.AllDescriptionTextView);
             laucher = (TextView)view.findViewById(R.id.LaucherTextView);
             time = (TextView)view.findViewById(R.id.LauchTimeTextView);
+
         }
     }
 
@@ -37,7 +42,7 @@ public class SubProjectAdapter extends RecyclerView.Adapter<SubProjectAdapter.Vi
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public SubProjectAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.project_item,parent,false);
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
@@ -45,9 +50,17 @@ public class SubProjectAdapter extends RecyclerView.Adapter<SubProjectAdapter.Vi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull SubProjectAdapter.ViewHolder holder, int position) {
         SubProject subProject = mSubProjectList.get(position);
         holder.name.setText(subProject.getName());
+        holder.name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(subProject.getContext(), ProjectDetailsActivity.class);
+                intent.putExtra("data",subProject.getJsonObject().toString());
+                subProject.getContext().startActivity(intent);
+            }
+        });
         holder.description.setText(subProject.getDescription());
         holder.laucher.setText(subProject.getLaucher());
         holder.time.setText(subProject.getTime());

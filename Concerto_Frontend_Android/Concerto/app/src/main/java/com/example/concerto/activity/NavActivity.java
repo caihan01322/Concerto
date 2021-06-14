@@ -84,6 +84,7 @@ public class NavActivity extends AppCompatActivity {
         });
     }
 
+    /*
     @Override
     protected void onStop() {
         SharedPreferences sharedPreferences= getSharedPreferences("data", Context.MODE_PRIVATE);
@@ -102,6 +103,7 @@ public class NavActivity extends AppCompatActivity {
         editor.commit();
     }
 
+     */
 
     @Override
     protected void onResume() {

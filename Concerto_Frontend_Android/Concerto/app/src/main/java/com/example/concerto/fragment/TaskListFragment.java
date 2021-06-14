@@ -52,7 +52,7 @@ public class TaskListFragment extends Fragment {
     JSONArray jsonArray;
     String token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4In0.9i1K1-3jsGh3tbTh2eMmD64C3XOE-vX9c1JywsqSoT0";;
     String projectId;
-
+    public static Handler chandler;
 
 
 
@@ -108,10 +108,24 @@ public class TaskListFragment extends Fragment {
         initData();
         adapter=new TaskAdapter(mtasks,this.getContext(),this);
         cadapter=new TaskAdapter(completedTasks,this.getContext(),this);
+
+        adapter.setType(type);
+        cadapter.setType(type);
+
         adapter.setData(mtasks);
         cadapter.setData(completedTasks);
         recyclerView.setAdapter(adapter);
         recyclerViewComplete.setAdapter(cadapter);
+
+        chandler = new Handler(){
+            //handleMessage为处理消息的方法
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if(msg.what == 1) {
+                    onResume();
+                }
+            }
+        };
 
         return view;
     }
@@ -131,7 +145,7 @@ public class TaskListFragment extends Fragment {
                             url="http://81.69.253.27:7777/User/Schedule/Recommend";
                             break;
                         case 1:
-                            url="http://81.69.253.27:7777/User/Schedule/Day";
+                            url="http://81.69.253.27:7777/User/Schedule/day";
                             break;
                         case 2:
                             url="http://81.69.253.27:7777/User/Schedule/Week";
@@ -253,9 +267,6 @@ public class TaskListFragment extends Fragment {
                 c1.setTime(inDate);
                 Calendar c2=Calendar.getInstance();
                 c2.setTime(outDate);
-
-
-
                 int days = c2.get(Calendar.DAY_OF_YEAR) - c1.get(Calendar.DAY_OF_YEAR);
                 */
 
@@ -269,7 +280,6 @@ public class TaskListFragment extends Fragment {
                 Calendar c2=Calendar.getInstance();
                 c2.setTime(endDate);
                 int days = c2.get(Calendar.DAY_OF_YEAR) - c1.get(Calendar.DAY_OF_YEAR);
-
                  */
 
                 int days=jsonObject.getInt("taskDays");
@@ -281,10 +291,10 @@ public class TaskListFragment extends Fragment {
                 //筛选
                 if(status==0){
                     //if (task.getTaskTitle().contains(titleLimit))
-                        mtasks.add(task);
+                    mtasks.add(task);
                 }else if(status==1){
                     //if (task.getTaskTitle().contains(titleLimit))
-                        completedTasks.add(task);
+                    completedTasks.add(task);
                 }
 
             }
@@ -340,6 +350,7 @@ public class TaskListFragment extends Fragment {
                     for(String tag:tags){
                         if(mtask.getTags().get(j).tagContent.contains(tag)){
                             flag=1;
+                            break;
                         }
                     }
                 }
@@ -357,6 +368,7 @@ public class TaskListFragment extends Fragment {
                     for(String tag:tags){
                         if(mtask.getTags().get(j).tagContent!=""&&mtask.getTags().get(j).tagContent.contains(tag)){
                             flag=1;
+                            break;
                         }
                     }
                 }
@@ -375,6 +387,7 @@ public class TaskListFragment extends Fragment {
                     for(String name:names){
                         if(mtask.getNames().get(j).contains(name)){
                             flag=1;
+                            break;
                         }
                     }
                 }
@@ -391,6 +404,7 @@ public class TaskListFragment extends Fragment {
                     for(String name:names){
                         if(mtask.getNames().get(j).contains(name)){
                             flag=1;
+                            break;
                         }
                     }
                 }

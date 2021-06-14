@@ -2,6 +2,7 @@ package com.example.concerto.adapter;
 
 import android.app.Notification;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.util.Log;
@@ -19,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.concerto.R;
+import com.example.concerto.activity.NavActivity;
 import com.example.concerto.bean.TagsItem;
 import com.example.concerto.bean.TaskItem;
 import com.example.concerto.fragment.TaskListFragment;
@@ -40,6 +42,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     String[] colors={"#FFB6C1","#BA55D3","#1E90FF","#00FFFF","#00FF7F"};
     Context mcontext;
     TaskListFragment fragment;
+    int type;
+
+    public void setType(int type) {
+        this.type = type;
+    }
 
     public TaskAdapter(List<TaskItem> tasks , Context context, TaskListFragment fragment){
         mtasks=tasks;
@@ -52,14 +59,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.task_item,parent,false);
         ViewHolder holder=new ViewHolder(view);
-
-        //点击跳转至任务表单
-        holder.task_item_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
         return holder;
     }
 
@@ -72,7 +71,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         mtasks.clear();
         mtasks.addAll(tasks);
         this.notifyDataSetChanged();
-        Log.v("testprojectselect","*******888888****");
+        //Log.v("testprojectselect","*******888888****");
     }
 
     @Override
@@ -99,7 +98,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
         //如果完成则。。。
         if(task.getComplete()==1){
-
             holder.tv_complete.setTextColor(Color.parseColor(colors[position%5]));
             holder.line.setBackgroundColor(Color.parseColor("#808080"));
             holder.tv_complete.setText("√");
@@ -136,7 +134,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
                                 Response response = client.newCall(request).execute();
                                 String data=response.body().string();
-                                Log.v("test","------"+data);
+                                //Log.v("test","------"+data);
 
 
                             }catch (Exception e){
@@ -210,7 +208,36 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             holder.names.addView(textView);
         }
 
-
+        if(type==4||type==5){
+            //点击跳转至任务表单
+            holder.clickArea.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String id=mtasks.get(position).getTaskId();
+                    Intent intent=new Intent(mcontext, NavActivity.class);
+                    intent.putExtra("taskId",id);
+                    mcontext.startActivity(intent);
+                }
+            });
+            holder.clickArea2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String id=mtasks.get(position).getTaskId();
+                    Intent intent=new Intent(mcontext, NavActivity.class);
+                    intent.putExtra("taskId",id);
+                    mcontext.startActivity(intent);
+                }
+            });
+            holder.tv_title.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String id=mtasks.get(position).getTaskId();
+                    Intent intent=new Intent(mcontext, NavActivity.class);
+                    intent.putExtra("taskId",id);
+                    mcontext.startActivity(intent);
+                }
+            });
+        }
 
     }
 
@@ -222,7 +249,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        LinearLayout task_item_layout;
+        LinearLayout clickArea;
+        LinearLayout clickArea2;
         View line;
         TextView tv_days;
         TextView tv_complete;
@@ -240,7 +268,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             tags=itemView.findViewById(R.id.line_tags);
             names=itemView.findViewById(R.id.line_names);
             timebar=itemView.findViewById(R.id.tv_task_item_time);
-            task_item_layout=itemView.findViewById(R.id.task_item);
+            clickArea=itemView.findViewById(R.id.click_area);
+            clickArea2=itemView.findViewById(R.id.click_area2);
             tv_days=itemView.findViewById(R.id.tv_task_days);
         }
     }

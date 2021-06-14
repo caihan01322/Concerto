@@ -27,9 +27,8 @@ public class PersonalAgendaFragment extends Fragment implements View.OnClickList
 
     TabLayout tabLayout;
     ViewPager viewPager;
-    ImageView iv_select;//弹出筛选界面
+    //ImageView iv_select;//弹出筛选界面
     View view;
-    Button test;
 
     private AgendaFragmentAdapter adapter;
     private List<String> titles;
@@ -48,23 +47,12 @@ public class PersonalAgendaFragment extends Fragment implements View.OnClickList
         adapter = new AgendaFragmentAdapter(getChildFragmentManager());
         tabLayout=view.findViewById(R.id.tab_layout_content);
         viewPager=view.findViewById(R.id.view_pager_title);
-        iv_select=view.findViewById(R.id.iv_select);
-
-        test=view.findViewById(R.id.test);
+        //iv_select=view.findViewById(R.id.iv_select);
 
 
 
-        test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(getActivity(), ProjectDetailsActivity.class);
-                startActivity(intent);
-            }
-        });
 
-
-
-        iv_select.setOnClickListener(this);
+        //iv_select.setOnClickListener(this);
         adapter.setList(titles);
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -102,6 +90,7 @@ public class PersonalAgendaFragment extends Fragment implements View.OnClickList
 
     @Override
     public void onClick(View v) {
+        /*
         PopWindowUtil popWindow = null;
         try {
             popWindow = new PopWindowUtil(0,this.getActivity(),R.layout.popwindow_select,280,0,0);
@@ -120,6 +109,6 @@ public class PersonalAgendaFragment extends Fragment implements View.OnClickList
         lp.alpha = 0.8f; //设置透明度
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         getActivity().getWindow().setAttributes(lp);
-
+        */
     }
 }

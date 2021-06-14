@@ -312,4 +312,13 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
                 e.printStackTrace();
             }
     }
+
+
+    @Override
+    public void dismiss() {
+        super.dismiss();
+        Message msg=new Message();
+        msg.what=1;
+        TaskListFragment.chandler.sendMessage(msg);
+    }
 }

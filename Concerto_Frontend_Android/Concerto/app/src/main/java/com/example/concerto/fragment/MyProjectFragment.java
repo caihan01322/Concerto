@@ -1,12 +1,14 @@
 package com.example.concerto.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.concerto.activity.ProjectDetailsActivity;
 import com.example.concerto.adapter.SubProjectAdapter;
 import com.example.concerto.bean.SubProject;
 import com.example.concerto.R;
@@ -46,7 +49,7 @@ public class MyProjectFragment extends Fragment implements View.OnClickListener 
     private TextView descriptonTextView2;
     private TextView descriptonTextView3;
     private TextView descriptonTextView4;
-    private Context context = this.getActivity();
+    private Context context;
     private View view;
 
     public MyProjectFragment() {
@@ -58,7 +61,7 @@ public class MyProjectFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        context=getActivity();
     }
 
     @Override
@@ -119,7 +122,7 @@ public class MyProjectFragment extends Fragment implements View.OnClickListener 
                         JSONObject adminJsonObject = jsonObject2.getJSONObject("admin");
                         String laucher = null;
                         laucher = adminJsonObject.getString("userName");
-                        SubProject subProject = new SubProject(projectName,projectDescription,"发起人："+laucher,projectStartTime);
+                        SubProject subProject = new SubProject(projectName,projectDescription,"发起人："+laucher,projectStartTime,context,jsonObject2);
                         list.add(subProject);
 
                     }
@@ -139,6 +142,14 @@ public class MyProjectFragment extends Fragment implements View.OnClickListener 
                                         String name = subProject.getName();
                                         String description = subProject.getDescription();
                                         titleTextView1.setText(name);
+                                        titleTextView1.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                Intent intent = new Intent(context,ProjectDetailsActivity.class);
+                                                intent.putExtra("data",subProject.getJsonObject().toString());
+                                                startActivity(intent);
+                                            }
+                                        });
                                         descriptonTextView1.setText(description);
                                     }
                                     else if (i==1)
@@ -147,6 +158,14 @@ public class MyProjectFragment extends Fragment implements View.OnClickListener 
                                         String name = subProject.getName();
                                         String description = subProject.getDescription();
                                         titleTextView2.setText(name);
+                                        titleTextView2.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                Intent intent = new Intent(context, ProjectDetailsActivity.class);
+                                                intent.putExtra("data",subProject.getJsonObject().toString());
+                                                startActivity(intent);
+                                            }
+                                        });
                                         descriptonTextView2.setText(description);
                                     }
                                     else if (i==2)
@@ -155,6 +174,14 @@ public class MyProjectFragment extends Fragment implements View.OnClickListener 
                                         String name = subProject.getName();
                                         String description = subProject.getDescription();
                                         titleTextView3.setText(name);
+                                        titleTextView3.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                Intent intent = new Intent(context, ProjectDetailsActivity.class);
+                                                intent.putExtra("data",subProject.getJsonObject().toString());
+                                                startActivity(intent);
+                                            }
+                                        });
                                         descriptonTextView3.setText(description);
                                     }
                                     else if (i==3)
@@ -163,6 +190,17 @@ public class MyProjectFragment extends Fragment implements View.OnClickListener 
                                         String name = subProject.getName();
                                         String description = subProject.getDescription();
                                         titleTextView4.setText(name);
+                                        titleTextView4.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                Intent intent = new Intent(context, ProjectDetailsActivity.class);
+                                                intent.putExtra("data",subProject.getJsonObject().toString());
+
+
+                                                Log.v("testDataMyP","****************"+subProject.getJsonObject().toString());
+                                                startActivity(intent);
+                                            }
+                                        });
                                         descriptonTextView4.setText(description);
                                     }
                                 }

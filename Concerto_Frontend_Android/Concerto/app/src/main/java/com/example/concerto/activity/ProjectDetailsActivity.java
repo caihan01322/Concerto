@@ -5,17 +5,21 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.concerto.R;
 import com.example.concerto.adapter.ProjectDetailsAdapter;
 import com.example.concerto.util.PopWindowUtil;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 import org.json.JSONException;
@@ -33,11 +37,11 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
     ImageView iv_back;
     ImageView iv_select;//弹出筛选界面
     View view;
-    public String projectId="2";
+    public String projectId;
     private PagerAdapter adapter;
     private List<String> titles;
     JSONObject jsonObject;
-
+    FloatingActionButton btn_add;
 
 
     public JSONObject getJsonObject() {
@@ -55,33 +59,22 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
         editor.putString("titleLimit", "");
         editor.commit();
 
-
-
-
-        String jsonData=getIntent().getStringExtra("project");
-
-
+        String jsonData="";
+        Intent intent=getIntent();
+        jsonData=intent.getStringExtra("data");
         //测试
-        jsonData="{" +
-                "            \"projectId\": 2,\n" +
-                "            \"projectName\": \"Edmundd\",\n" +
-                "            \"projectDescription\": \"xxxxxxxxxxxx\",\n" +
-                "            \"projectStartTime\": \"2021-05-06\",\n" +
-                "            \"projectEndTime\": \"2021-05-07\",\n" +
-                "            \"admin\": {\n" +
-                "                \"userPhone\": null,\n" +
-                "                \"userName\": \"Edmund\",\n" +
-                "                \"userEmail\": \"1661135388@qq.com\",\n" +
-                "                \"userIntroducton\": null\n" +
-                "            }\n" +
-                "        }";
 
+       
         try {
             jsonObject=new JSONObject(jsonData);
             projectId=jsonObject.getString("projectId");
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+
+        btn_add=findViewById(R.id.btn_add_task);
+        btn_add.setOnClickListener(this);
         iv_back=findViewById(R.id.iv_project_details_back);
         tv_title=findViewById(R.id.tv_project_details_title);
         iv_select=findViewById(R.id.iv_project_details_select);
@@ -137,6 +130,9 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
                 Log.v("ProjectDetails","----------返回--------");
                 this.finish();
                 break;
+
+            case R.id.btn_add_task:
+                Toast.makeText(this,"添加任务",Toast.LENGTH_SHORT).show();
             default:
                 break;
         }
