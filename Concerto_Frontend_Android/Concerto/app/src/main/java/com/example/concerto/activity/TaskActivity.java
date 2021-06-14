@@ -59,6 +59,7 @@ public class TaskActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView1;
     private HomeAdapter1 mAdapter1;
 
+    private String userId;
     private String taskId;
     private int taskVersion;
     private String taskTitle;
@@ -71,6 +72,7 @@ public class TaskActivity extends AppCompatActivity {
     private List<Participants> participants;
     private List<SubTasks> subTasks;
 
+    private ArrayList<String> paticId;
     private ArrayList<String> particName;
     private ArrayList<String> tagContent;
     private ArrayList<String> tagColor;
@@ -79,6 +81,7 @@ public class TaskActivity extends AppCompatActivity {
     private ArrayList<String> subTaskTitle;
     private List<List<Participants>> subTaskPartic;
     private ArrayList<String> subTaskJoiner;
+    private boolean[] itemStatus;
 
     private ArrayList<String> user;
     private ArrayList<String> time;
@@ -112,8 +115,10 @@ public class TaskActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
 
+        userId = "1";
         taskId = "83";
         tags = new ArrayList<>();
+        paticId = new ArrayList<>();
         particName = new ArrayList<>();
         subTasks = new ArrayList<>();
         tagContent = new ArrayList<>();
@@ -179,6 +184,7 @@ public class TaskActivity extends AppCompatActivity {
                 taskPriority = data.getTaskPriority();
                 participants = data.getParticipants();
                 for(Participants p : participants){
+                    paticId.add(p.getUserId()+"");
                     particName.add(p.getUserName());
                 }
                 tags = data.getTags();
@@ -207,6 +213,10 @@ public class TaskActivity extends AppCompatActivity {
                         joiner.append("暂无参与者");
                     }
                     subTaskJoiner.add(joiner.toString());
+                }
+                itemStatus= new boolean[particName.size()];
+                for(int m = 0; m<particName.size(); m++){
+                    itemStatus[m] = true;
                 }
             }
         }
@@ -254,11 +264,92 @@ public class TaskActivity extends AppCompatActivity {
         });
 
         tvCreateSubTask = (TextView) findViewById(R.id.tvCreateSubTask);
+//        tvCreateSubTask.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(TaskActivity.this, TaskCreateActivity.class);
+//                startActivity(intent);
+//            }
+//        });
         tvCreateSubTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(TaskActivity.this, TaskCreateActivity.class);
-                startActivity(intent);
+                final View alertDialogView = getLayoutInflater().inflate (R.layout.subtask_layout, null, false);
+                final EditText editText = (EditText) alertDialogView.findViewById(R.id.etSubTaskName);
+                final TextView textView = (TextView) alertDialogView.findViewById(R.id.tvSelectJoiner);
+                final boolean[] iStatus = new boolean[particName.size()];
+                for(int m = 0; m<particName.size(); m++){
+                    iStatus[m] = false;
+                }
+                textView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final StringBuilder joiner = new StringBuilder();
+                        final String[] items = particName.toArray(new String[particName.size()]);
+
+                        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(TaskActivity.this);
+                        alertBuilder.setTitle("请选择任务参与者");
+
+                        alertBuilder.setMultiChoiceItems(items, iStatus , new DialogInterface.OnMultiChoiceClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i, boolean isChecked) {
+                                if (isChecked){
+                                    Toast.makeText(TaskActivity.this, "选择" + items[i], Toast.LENGTH_SHORT).show();
+                                }else {
+                                    Toast.makeText(TaskActivity.this, "取消选择" + items[i], Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
+                        alertBuilder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                boolean flag = false;
+                                for(int m = 0; m<particName.size(); m++){
+                                    if(iStatus[m]){
+                                        joiner.append(items[m]).append(" ");
+                                        flag = true;
+                                    }
+                                }
+                                if(!flag){
+                                    joiner.append("暂无参与者");
+                                }
+                                textView.setText(joiner.toString());
+                                alertDialog3.dismiss();
+                            }
+                        });
+
+                        alertBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                alertDialog3.dismiss();
+                            }
+                        });
+
+                        alertDialog3 = alertBuilder.create();
+                        alertDialog3.show();
+                    }
+                });
+                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(TaskActivity.this);
+                alertBuilder.setView(alertDialogView);
+                alertBuilder.setTitle("请添加子任务");
+                alertBuilder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        System.out.println(editText.getText());
+                        System.out.println(textView.getText());
+                        alertDialog0.dismiss();
+                    }
+                });
+                alertBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        alertDialog0.dismiss();
+                    }
+                });
+
+                alertDialog0 = alertBuilder.create();
+                alertDialog0.show();
             }
         });
 
@@ -420,13 +511,13 @@ public class TaskActivity extends AppCompatActivity {
         tvEditJoiner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final StringBuilder joiner = new StringBuilder();
                 final String[] items = particName.toArray(new String[particName.size()]);
-                final boolean[] iStatus = new boolean[particName.size()];
 
                 AlertDialog.Builder alertBuilder = new AlertDialog.Builder(TaskActivity.this);
                 alertBuilder.setTitle("请选择任务参与者");
 
-                alertBuilder.setMultiChoiceItems(items, iStatus , new DialogInterface.OnMultiChoiceClickListener() {
+                alertBuilder.setMultiChoiceItems(items, itemStatus , new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i, boolean isChecked) {
                         if (isChecked){
@@ -440,6 +531,17 @@ public class TaskActivity extends AppCompatActivity {
                 alertBuilder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        boolean flag = false;
+                        for(int m = 0; m<particName.size(); m++){
+                            if(itemStatus[m]){
+                                joiner.append(items[m]).append(" ");
+                                flag = true;
+                            }
+                        }
+                        if(!flag){
+                            joiner.append("暂无参与者");
+                        }
+                        tvEditJoiner.setText(joiner.toString());
                         alertDialog3.dismiss();
                     }
                 });
@@ -518,8 +620,8 @@ public class TaskActivity extends AppCompatActivity {
 
         JSONArray addTags =new JSONArray();
         JSONArray delTags =new JSONArray();
-        JSONArray addParticipants =new JSONArray();
-        JSONArray delParticipants =new JSONArray();
+        JSONArray addParticipants = new JSONArray();
+        JSONArray delParticipants = new JSONArray();
 
         JSONObject json = new JSONObject();
         json.put("taskId",taskId);
@@ -531,10 +633,10 @@ public class TaskActivity extends AppCompatActivity {
         json.put("taskStartTime",simpleDateFormat.format(taskStartTime));
         json.put("taskEndTime",simpleDateFormat.format(taskEndTime));
         json.put("taskVersion",taskVersion);
-        json.put("addTags",addTags);
-        json.put("delTags",delTags);
-        json.put("addParticipants",addParticipants);
-        json.put("delParticipants",delParticipants);
+        json.put("addTags",addTags);    //待完善
+        json.put("delTags",delTags);    //待完善
+        json.put("addParticipants",addParticipants);    //待完善
+        json.put("delParticipants",delParticipants);    //待完善
 
         System.out.println(json.toString());
         RequestBody body = RequestBody.create(JSON, json.toString());
