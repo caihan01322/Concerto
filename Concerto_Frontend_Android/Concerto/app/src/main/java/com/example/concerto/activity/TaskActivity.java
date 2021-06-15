@@ -278,13 +278,13 @@ public class TaskActivity extends AppCompatActivity {
                 final EditText editText = (EditText) alertDialogView.findViewById(R.id.etSubTaskName);
                 final TextView textView = (TextView) alertDialogView.findViewById(R.id.tvSelectJoiner);
                 final boolean[] iStatus = new boolean[particName.size()];
+                final StringBuilder joiner = new StringBuilder();
                 for(int m = 0; m<particName.size(); m++){
                     iStatus[m] = false;
                 }
                 textView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        final StringBuilder joiner = new StringBuilder();
                         final String[] items = particName.toArray(new String[particName.size()]);
 
                         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(TaskActivity.this);
@@ -338,6 +338,68 @@ public class TaskActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         System.out.println(editText.getText());
                         System.out.println(textView.getText());
+                        Thread t = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    OkHttpClient client = new OkHttpClient();//创建OkHttpClient对象
+                                    String url = "http://1.15.141.65:8866/subtask";
+
+                                    JSONArray participants = new JSONArray();
+                                    for(int m = 0; m<particName.size(); m++){
+                                        if(iStatus[m]){
+                                            JSONObject Json = new JSONObject();
+                                            Json.put("userId", paticId.get(m));
+                                            participants.put(Json);
+                                        }
+                                    }
+                                    JSONObject json = new JSONObject();
+                                    json.put("taskVersionModifyUserId",userId);
+                                    json.put("parentTaskId",taskId);
+                                    json.put("taskTitle",editText.getText().toString());
+                                    json.put("participants",participants);
+
+                                    System.out.println(json.toString());
+                                    RequestBody body = RequestBody.create(JSON, json.toString());
+                                    Request request = new Request.Builder()
+                                            .url(url)//请求接口。如果需要传参拼接到接口后面。
+                                            .addHeader("token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2In0.BWVpUdSvtWB4DKwLpMcYiuxUBmAKBC1kfLvvEmuS61E")//头部添加token
+                                            .put(body)
+                                            .build();//创建Request 对象
+                                    Response response = null;
+                                    response = client.newCall(request).execute();//得到Response 对象
+                                    if (response.isSuccessful()) {
+                                        String strByJson = response.body().string();
+                                        System.out.println(strByJson);
+                                        JSONObject jsonObj = new JSONObject(strByJson);
+                                        int status = jsonObj.getInt("status");
+                                        String message = jsonObj.getString("message");
+                                        Object data = jsonObj.get("data");
+                                        if(status==200){
+                                            subTaskId.add(Integer.parseInt(data.toString()));
+                                            subTaskTitle.add(editText.getText().toString());
+                                            subTaskStatus.add(0);
+                                        //  subTaskPartic.add();
+                                            if("".equals(joiner.toString())){
+                                                joiner.append("暂无参与者");
+                                            }
+                                            subTaskJoiner.add(joiner.toString());
+                                            TaskActivity.this.runOnUiThread(new Runnable() {
+                                                public void run() {
+                                                    mAdapter.notifyDataSetChanged();
+                                                }
+                                            });
+                                        }
+                                        Looper.prepare();
+                                        Toast.makeText(TaskActivity.this,message,Toast.LENGTH_SHORT).show();
+                                        Looper.loop();
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                        t.start();
                         alertDialog0.dismiss();
                     }
                 });
@@ -625,7 +687,7 @@ public class TaskActivity extends AppCompatActivity {
 
         JSONObject json = new JSONObject();
         json.put("taskId",taskId);
-        json.put("taskVersionModifyUserId","1");
+        json.put("taskVersionModifyUserId",userId);
         json.put("taskVersionDescription","修改了一大堆东西");
         json.put("taskTitle",etTaskName.getText().toString());
         json.put("taskType","0");
