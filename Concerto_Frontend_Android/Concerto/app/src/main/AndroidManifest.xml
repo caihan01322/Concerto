@@ -3,6 +3,7 @@
     package="com.example.concerto">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -19,11 +20,17 @@
 
         <activity android:name=".activity.ProjectDetailsActivity" />
         <activity android:name=".activity.NavActivity">
+<!--        android:theme="@style/AppTheme"-->
+<!--        android:networkSecurityConfig="@xml/network_security_config">-->
+<!--        <activity android:name=".activity.TaskActivity">-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.TaskCreateActivity" />
+        <activity android:name=".activity.TaskEditRecActivity" />
+        <activity android:name=".activity.MainActivity" />
     </application>
 
 </manifest>
