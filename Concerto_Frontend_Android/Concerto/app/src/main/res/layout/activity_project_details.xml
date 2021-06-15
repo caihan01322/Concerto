@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".fragment.PersonalAgendaFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="10dp">
+        <ImageView
+            android:id="@+id/iv_project_details_back"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="25dp"
+            android:padding="4dp"
+            android:layout_marginRight="25dp"
+            android:background="@drawable/back" />
+        <TextView
+            android:id="@+id/tv_project_details_title"
+            android:layout_width="0dp"
+            android:layout_weight="9"
+            android:layout_height="wrap_content"
+            android:text="XX项目"
+            android:maxLines="1"
+            android:gravity="center_horizontal"
+            android:textSize="25sp"
+            android:layout_marginLeft="25dp" />
+
+
+
+        <ImageView
+            android:id="@+id/iv_project_details_select"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="25dp"
+            android:layout_marginRight="25dp"
+            android:background="@drawable/pop_selectview" />
+    </LinearLayout>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_project_details_layout_content"
+        android:layout_width="match_parent"
+        android:layout_height="34dp"
+        app:tabBackground="@color/white"
+        app:tabIndicatorColor="#00f500"
+        app:tabIndicatorHeight="1dp"
+        app:tabMode="scrollable"
+        app:tabMinWidth="101dp"
+        app:tabPaddingStart="5dp"
+        app:tabPaddingEnd="5dp"
+        app:tabSelectedTextColor="#00f500"
+        app:tabTextAppearance="@style/tab_title"
+        app:tabTextColor="#5b666f" />
+
+
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/view_pager_project_details_title"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:background="@color/white" >
+
+
+    </androidx.viewpager.widget.ViewPager>
+
+</LinearLayout>
+
+<com.google.android.material.floatingactionbutton.FloatingActionButton
+    android:id="@+id/btn_add_task"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentBottom="true"
+    android:layout_marginBottom="50dp"
+    android:layout_marginRight="30dp"
+    app:fabSize="normal"
+    android:src="@drawable/add"
+    />
+
+</RelativeLayout>
+
