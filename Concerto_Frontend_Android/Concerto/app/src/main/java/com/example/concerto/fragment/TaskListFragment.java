@@ -177,7 +177,7 @@ public class TaskListFragment extends Fragment {
                     Response response = client.newCall(request).execute();
                     String temp=response.body().string();
                     data=temp.replaceAll("null","{}");
-                    Log.v("TaskListFragement",data);
+                    //Log.v("TaskListFragement",data);
                     if(data != null && data.startsWith("\ufeff"))
                     {
                         data =  data.substring(1);
@@ -186,7 +186,7 @@ public class TaskListFragment extends Fragment {
 
                     JSONObject jsonObject=new JSONObject(data);
                     jsonArray=(JSONArray)jsonObject.getJSONArray("data");
-                    Log.v("TaskListFragement","-------"+type+"---------"+jsonArray.toString());
+                    //Log.v("TaskListFragement","-------"+type+"---------"+jsonArray.toString());
 
                 }catch (Exception e){
                     e.printStackTrace();
@@ -204,12 +204,12 @@ public class TaskListFragment extends Fragment {
         completedTasks.clear();
         if(jsonArray==null){
 
-            Log.v("TaskListFragement",type+"************NULL**************");
+            //Log.v("TaskListFragement",type+"************NULL**************");
             return;
         }
 
         try {
-            Log.v("TaskListFragement","-------"+type+"---------"+jsonArray.toString());
+            //Log.v("TaskListFragement","-------"+type+"---------"+jsonArray.toString());
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 TaskItem task=new TaskItem();
@@ -234,7 +234,7 @@ public class TaskListFragment extends Fragment {
 
                 JSONArray names=jsonObject.getJSONArray("participants");
 
-                Log.v("names",type+"************"+names+"**************");
+                //Log.v("names",type+"************"+names+"**************");
                 List<String> nameList=new ArrayList<>();
 
                 if(names.length()>0&&names!=null && !names.toString().equals("")){
@@ -299,8 +299,8 @@ public class TaskListFragment extends Fragment {
 
             }
 
-            Log.v("test",type+"/////88888"+mtasks);
-            Log.v("test",type+"////88888"+completedTasks);
+            //Log.v("test",type+"/////88888"+mtasks);
+            //Log.v("test",type+"////88888"+completedTasks);
 
 
         }catch (Exception e){
@@ -321,7 +321,7 @@ public class TaskListFragment extends Fragment {
     private void removeLimit(){
         SharedPreferences sharedPreferences= getActivity().getSharedPreferences("data", Context.MODE_PRIVATE);
         String titleLimit = sharedPreferences.getString("titleLimit","");
-        Log.d("limit",titleLimit);
+        //Log.d("limit",titleLimit);
         for (int i = mtasks.size()-1;i >= 0;i--) {
             TaskItem mtask = mtasks.get(i);
             if (!mtask.getTaskTitle().contains(titleLimit)){
@@ -419,7 +419,7 @@ public class TaskListFragment extends Fragment {
         cadapter.notifyDataSetChanged();
 
 
-        Log.d("limittitle",titleLimit);
+        //Log.d("limittitle",titleLimit);
         //Log.d("limittag",tags.toString());
         //Log.d("limitname",names.toString());
 

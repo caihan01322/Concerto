@@ -62,9 +62,7 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
         String jsonData="";
         Intent intent=getIntent();
         jsonData=intent.getStringExtra("data");
-        //测试
 
-       
         try {
             jsonObject=new JSONObject(jsonData);
             projectId=jsonObject.getString("projectId");
@@ -110,7 +108,7 @@ public class ProjectDetailsActivity extends AppCompatActivity implements View.On
             case R.id.iv_project_details_select:
                 PopWindowUtil popWindow = null;
                 try {
-                    popWindow = new PopWindowUtil(1,this,R.layout.popwindow_select,280,0,0);
+                    popWindow = new PopWindowUtil(projectId,1,this,R.layout.popwindow_select,280,0,0);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

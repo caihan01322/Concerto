@@ -51,7 +51,7 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
     String title;
     ImageView btn_select_title;
     String token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4In0.9i1K1-3jsGh3tbTh2eMmD64C3XOE-vX9c1JywsqSoT0"; ;
-    String projectId="2";
+    String projectId;
 
     String pdata;//参与者返回数据
     JSONArray pjsonArray;
@@ -82,7 +82,8 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
     }
 
     //type:0==日程筛选  1==项目筛选
-    public PopWindowUtil(int type,final Activity context, int layout, int width, int x, int y) throws InterruptedException {
+    public PopWindowUtil(String id,int type,final Activity context, int layout, int width, int x, int y) throws InterruptedException {
+        projectId=id;
         this.type=type;
         setLayout(layout);
         setWidth(width);
@@ -102,7 +103,7 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
         btn_select_title.setOnClickListener(this);
         getData();
         try {
-            Thread.sleep(200);
+            Thread.sleep(250);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -255,10 +256,10 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
                     //参与者返回数据
                     OkHttpClient pclient=new OkHttpClient();
                     Request.Builder preqBuild = new Request.Builder();
-                    preqBuild.addHeader("projectId", projectId+"");
+                    preqBuild.addHeader("projectId", projectId);
                     HttpUrl.Builder urlBuilder = HttpUrl.parse(participantUrl)
                             .newBuilder();
-                    urlBuilder.addQueryParameter("projectId", projectId+"");
+                    urlBuilder.addQueryParameter("projectId", projectId);
                     preqBuild.url(urlBuilder.build());
                     Request prequest = preqBuild.build();
                     Response presponse = pclient.newCall(prequest).execute();
@@ -271,9 +272,10 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
 
 
                     JSONObject pjsonObject=new JSONObject(pdata);
-                    if(pjsonObject.getJSONArray("data")!=null)
-                        pjsonArray=pjsonObject.getJSONArray("data");
-                   // Log.v("ParticipantsFragment","--------参与者xx---------"+pjsonArray);
+                    Log.v("testParticipants","--------参与者xx---------"+pdata);
+                    pjsonArray = pjsonObject.getJSONArray("data");
+                    Log.v("testParticipants", "--------参与者xx---------" + pjsonArray);
+
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -304,7 +306,6 @@ public class PopWindowUtil extends PopupWindow implements View.OnClickListener{
             try {
                 for(int i=0;i<pjsonArray.length();i++){
                     JSONObject pjsonObject=pjsonArray.getJSONObject(i);
-                    UserItem puserItem=new UserItem();
                     String nameobj=pjsonObject.getString("userName");
                     names.add(nameobj);
                 }
